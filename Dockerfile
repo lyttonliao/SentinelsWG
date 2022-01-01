@@ -28,4 +28,6 @@ RUN mkdir -p /vol/web/media && \
 
 USER user
 
+VOLUME /vol/web
+
 CMD ["entrypoint.sh"]
