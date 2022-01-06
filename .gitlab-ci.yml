@@ -14,9 +14,9 @@ stages:
   - Destroy
 
 Test and Lint:
-  image: docker:20.10.11
+  image: docker:19.03.5
   services:
-    - docker:20.10.11-dind
+    - docker:19.03.5-dind
   stage: Test and Lint
   script:
     - apk add --update docker-compose
