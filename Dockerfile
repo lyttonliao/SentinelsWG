@@ -1,4 +1,4 @@
-FROM python:3.9-alpine3.15
+FROM python:3.9-alpine
 LABEL maintainer="Lytton Liao - Sentinels"
 
 ENV PYTHONUNBUFFERED 1

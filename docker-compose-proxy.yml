@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.7'
 
 services:
   app:
@@ -26,7 +26,7 @@ services:
       - static_data:/vol/static
   
   db:
-    image: postgres:14-alpine
+    image: postgres:13-alpine
     environment:
       - POSTGRES_DB=devdb
       - POSTGRES_USER=devuser

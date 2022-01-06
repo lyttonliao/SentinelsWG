@@ -1,3 +1,9 @@
+image:
+  name: hashicorp/terraform:0.12.21
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
 stages:
   - Test and Lint
   - Build and Push
@@ -8,16 +14,23 @@ stages:
   - Destroy
 
 Test and Lint:
+  image: docker:19.03.5
+  services:
+    - docker:19.03.5-dind
   stage: Test and Lint
   script:
-    - echo "Test and Lint"
+    - apk add --update docker-compose
+    - docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test && flake8"
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/ || $CI_COMMIT_BRANCH =~ /^(main|production)$/'
 
 Validate Terraform:
   stage: Test and Lint
   script:
-    - echo "Validate Terraform"
+    - cd deploy/
+    - terraform init -backend=false
+    - terraform validate
+    - terraform fmt -check
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/ || $CI_COMMIT_BRANCH =~ /^(main|production)$/'
 
