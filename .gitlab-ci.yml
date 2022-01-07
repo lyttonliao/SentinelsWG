@@ -44,7 +44,7 @@ Build and Push:
     - pip3 install awscli
     - docker build --compress -t $ECR_REPO:$CI_COMMIT_SHORT_SHA .
     - $(aws ecr get-login --no-include-email --region us-east-1)
-    - docker push $ECR_REPO:CI_COMMIT_SHORT_SHA
+    - docker push $ECR_REPO:$CI_COMMIT_SHORT_SHA
     - docker tag $ECR_REPO:$CI_COMMIT_SHORT_SHA $ECR_REPO:latest
     - docker push $ECR_REPO:latest
   rules:
@@ -53,14 +53,22 @@ Build and Push:
 Staging Plan:
   stage: Staging Plan
   script: 
-    - echo "Run Terraform Plan for Staging"
+    - cd deploy/
+    - export TF_VAR_ecr_image_api=$ECR_REPO:$CI_COMMIT_SHORT_SHA
+    - terraform init
+    - terraform workspace select staging || terraform workspace new staging
+    - terraform plan
   rules:
     - if: '$CI_COMMIT_BRANCH =~ /^(main|production)$/'
 
 Staging Apply:
   stage: Staging Apply
   script: 
-    - echo "Run Terraform Apply for Staging"
+    - cd deploy/
+    - export TF_VAR_ecr_image_api=$ECR_REPO:$CI_COMMIT_SHORT_SHA
+    - terraform init
+    - terraform workspace select production || terraform workspace new production
+    - terraform plan
   rules:
     - if: '$CI_COMMIT_BRANCH =~ /^(main|production)$/'
 
