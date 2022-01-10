@@ -23,3 +23,4 @@ locals {
   }
 }
 
+data "aws_region" "current" {}
