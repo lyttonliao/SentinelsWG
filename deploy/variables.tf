@@ -22,3 +22,16 @@ variable "bastion_key_name" {
   default = "sentinels-api-devops-bastion"
 }
 
+variable "ecr_image_api" {
+  description = "ECR image for API"
+  default     = "843472542811.dkr.ecr.us-east-1.amazonaws.com/sentinels-api-devops:latest"
+}
+
+variable "ecr_image_proxy" {
+  description = "ECR image for proxy"
+  default     = "843472542811.dkr.ecr.us-east-1.amazonaws.com/sentinels-api-proxy:latest"
+}
+
+variable "django_secret_key" {
+  description = "Secret key for Django app"
+}

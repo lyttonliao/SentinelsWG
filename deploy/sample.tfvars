@@ -1,2 +1,3 @@
-db_username = "sentinels"
-db_password = "AzuResLow090997"
+db_username       = "app"
+db_password       = "changeme"
+django_secret_key = "changeme"
