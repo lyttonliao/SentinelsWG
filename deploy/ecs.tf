@@ -55,7 +55,7 @@ data "template_file" "api_container_definitions" {
 
 resource "aws_ecs_task_definition" "api" {
   family                   = "${local.prefix}-api"
-  container_definitions     = data.template_file.api_container_definitions.rendered
+  container_definitions    = data.template_file.api_container_definitions.rendered
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 256
@@ -103,11 +103,12 @@ resource "aws_security_group" "ecs_service" {
 }
 
 resource "aws_ecs_service" "api" {
-  name            = "${local.prefix}-api"
-  cluster         = aws_ecs_cluster.main.name
-  task_definition = aws_ecs_task_definition.api.family
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  name             = "${local.prefix}-api"
+  cluster          = aws_ecs_cluster.main.name
+  task_definition   = aws_ecs_task_definition.api.family
+  desired_count    = 1
+  launch_type      = "FARGATE"
+  platform_version = "1.4.0"
 
   network_configuration {
     subnets = [
