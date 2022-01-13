@@ -33,6 +33,7 @@ resource "aws_route53_record" "cert_validation" {
 }
 
 # triggers validation process in aws, not an actual resource in terraform
+# creates validation objection before we create our load balancer listener
 resource "aws_acm_certificate_validation" "cert" {
   certificate_arn         = aws_acm_certificate.cert.arn
   validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
