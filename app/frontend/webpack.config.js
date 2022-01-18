@@ -1,19 +1,22 @@
 const path = require("path");
-const webpack = require("webpack");
+// const webpack = require("webpack");
 
 module.exports = {
   entry: "./src/sentinels.js",
   output: {
     path: path.resolve(__dirname, "./static/frontend"),
-    filename: "[name].js",
+    filename: "./bundle.js",
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.js$|jsx/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
+          options: {
+            presets: ['@babel/env', '@babel/react']
+          }
         },
       },
     ],
@@ -21,12 +24,8 @@ module.exports = {
   optimization: {
     minimize: true,
   },
-//   plugins: [
-//     new webpack.DefinePlugin({
-//       "process.env": {
-//         // This has effect on the react lib size
-//         NODE_ENV: JSON.stringify("production"),
-//       },
-//     }),
-//   ],
+  devtool: 'source-map',
+  resolve: {
+    extensions: ['.js', '.jsx', '*']
+  }
 };
