@@ -55,6 +55,9 @@ class AuthTokenSerializer(serializers.Serializer):
         return attrs
 
 
+# -------------------------------------------------------------------------
+
+
 class WatchlistSerializer(serializers.ModelSerializer):
     """Serializer for watchlist objects"""
 
