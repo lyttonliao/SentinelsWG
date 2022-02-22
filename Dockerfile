@@ -10,7 +10,7 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt /requirements.txt
 RUN apk add --update --no-cache postgresql-client jpeg-dev && \
     apk add --update --no-cache --virtual .tmp-build-deps \
-        gcc libc-dev linux-headers postgresql-dev musl-dev zlib zlib-dev && \
+        gcc libc-dev linux-headers postgresql-dev musl-dev zlib zlib-dev libffi-dev && \
     pip install -r /requirements.txt && \
     apk del .tmp-build-deps
 

@@ -25,3 +25,7 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.Watchlist)
+admin.site.register(models.WatchlistItem)
+admin.site.register(models.Ticker)
+admin.site.register(models.TickerHistoricInfo)

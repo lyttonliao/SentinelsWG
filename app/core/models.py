@@ -1,9 +1,9 @@
-import uuid
-import os
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                         PermissionsMixin
 from django.conf import settings
+# from django.db.models.signals import post_save
+# from django.dispatch import receiver
 
 
 class UserManager(BaseUserManager):
@@ -39,24 +39,67 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
 
+    def __str__(self):
+        return self.email
 
+
+# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+# def create_auth_token(sender, instance=None, created=False, **kwargs):
+#     if created:
+#         Token.objects.create(user=instance)
+
+        
 class Watchlist(models.Model):
     """Create watchlist to track the commodity"""
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        primary_key=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.user.email
+
+
+class Ticker(models.Model):
+    """List of tickers that will reference watchlistitems and stockinfo"""
+    symbol = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.symbol
+
+
 class WatchlistItem(models.Model):
     """List of information to show when adding item to Watchlist"""
-    coin = models.CharField(max_length=255, unique=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    open_price = models.DecimalField(max_digits=10, decimal_places=2)
-    close_price = models.DecimalField(max_digits=10, decimal_places=2)
-    high_price = models.DecimalField(max_digits=10, decimal_places=2)
-    low_price = models.DecimalField(max_digits=10, decimal_places=2)
-    market_cap = models.IntegerField()
-    daily_volume = models.IntegerField()
-    watchlist = models.ManyToManyField('watchlist')
-    created_at = models.DateTimeField(auto_now_add=True)
+    watchlist = models.ForeignKey(
+        Watchlist,
+        related_name='watchlistitems',
+        on_delete=models.CASCADE
+    )
+    ticker = models.ForeignKey(
+        Ticker,
+        related_name='watchlistitems',
+        on_delete=models.CASCADE
+    )
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.symbol
+
+
+class TickerHistoricInfo(models.Model):
+    """Stores years of stock info for strategic testing"""
+    ticker = models.ForeignKey(
+        Ticker,
+        on_delete=models.CASCADE,
+    )
+    date = models.CharField(max_length=10)
+    open_price = models.DecimalField(max_digits=8, decimal_places=2)
+    high_price = models.DecimalField(max_digits=8, decimal_places=2)
+    low_price = models.DecimalField(max_digits=8, decimal_places=2)
+    close_price = models.DecimalField(max_digits=8, decimal_places=2)
+    volume = models.IntegerField()
+
+    def __str__(self):
+        return self.ticker.symbol
