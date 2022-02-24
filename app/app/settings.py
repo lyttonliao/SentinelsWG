@@ -185,8 +185,12 @@ REST_FRAMEWORK = {
 }
 
 REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'jwt-auth'
-JWT_AUTH_REFRESH_COOKIE = 'jwt-refresh-token'
+# JWT_AUTH_COOKIE = 'jwt-auth'
+# JWT_AUTH_REFRESH_COOKIE = 'jwt-refresh-token'
+
+REST_AUTH_SERIALIZERS = {
+    'JWT_TOKEN_CLAIMS_SERIALIZER': 'users.serializers.MyTokenObtainPairSerializer',
+}
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
@@ -208,15 +212,7 @@ SIMPLE_JWT = {
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
-
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'TOKEN_TYPE_CLAIM': 'token_type',
-
     'JTI_CLAIM': 'jti',
-
-    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
 
@@ -241,7 +237,3 @@ ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/?verification=1'
 LOGIN_URL = 'http://localhost:8000/dj-rest-auth/login/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-REST_AUTH_SERIALIZERS = {
-    'JWT_TOKEN_CLAIMS_SERIALIZER': 'user.serializers.MyTokenObtainPairSerializer',
-}

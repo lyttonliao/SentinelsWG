@@ -10,7 +10,8 @@ export default AuthContext;
 export const AuthProvider = ({children}) => {
 
     let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
-    let [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
+    let [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')).access : null)
+    
     let [loading, setLoading] = useState(true)
 
     let navigate = useNavigate()
@@ -30,6 +31,7 @@ export const AuthProvider = ({children}) => {
             setAuthTokens(data)
             setUser(jwt_decode(data.access))
             localStorage.setItem('authTokens', JSON.stringify(data))
+            // setUser(fetchUserInfo())
             navigate('/')
         } else {
             alert('Something went wrong!')
@@ -44,6 +46,25 @@ export const AuthProvider = ({children}) => {
         setUser(null)
         localStorage.removeItem('authTokens')
     }
+
+    
+    // let fetchUserInfo = async() => {
+    //     let user_id = jwt_decode(localStorage.getItem('authTokens').access).user_id
+    //     let response = await fetch(`http://127.0.0.1:8000/api/users/${user_id}`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': 'Bearer ' + String(authTokens.access)
+    //         },
+    //     })
+    //     let data = await response.json()
+
+    //     if (response.status === 200) {
+    //         setUser(data)
+    //     } else if (response.statusText === 'Unauthorized') {
+    //         logoutUser()
+    //     }
+    // }
 
 
     let updateToken = async() => {
@@ -60,6 +81,7 @@ export const AuthProvider = ({children}) => {
             setAuthTokens(data)
             setUser(jwt_decode(data.access))
             localStorage.setItem('authTokens', JSON.stringify(data))
+            // setUser(fetchUserInfo())
         } else {
             setAuthTokens(null)
             setUser(null)
