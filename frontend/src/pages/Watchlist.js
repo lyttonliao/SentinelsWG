@@ -13,7 +13,7 @@ const Watchlist = () => {
 
 
     let getWatchlist = async() => {
-        let response = await fetch(`http://127.0.0.1:8000/api/watchlist/watchlists/${user.user_id}/`, {
+        let response = await fetch(`http://127.0.0.1:8000/api/watchlists/${user.user_id}/`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

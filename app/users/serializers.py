@@ -36,23 +36,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
 
-        refresh = self.get_token(self.user)
-
-        data['email'] = UserSerializer(self.user).data.email
-        data['refresh'] = str(refresh)
-        data['access'] = str(refresh.access_token)
-
-        if api_settings.UPDATE_LAST_LOGIN:
-            update_last_login(None, self.user)
-
-        return data
-
-    # @classmethod
-    # def get_token(cls, user):
-    #     token = super().get_token(user)
-
-    #     token['email'] = user.email
-    #     return token
+        token['email'] = user.email
+        return token

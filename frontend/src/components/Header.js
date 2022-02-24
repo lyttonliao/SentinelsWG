@@ -1,7 +1,5 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
-import { Navbar, Container, Nav, NavDropdown, NavLink, Button } from 'react-bootstrap'
 
 
 function Header() {

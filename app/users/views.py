@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 from core.models import User
-from user.serializers import UserSerializer, MyTokenObtainPairSerializer
+from users.serializers import UserSerializer, MyTokenObtainPairSerializer
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
