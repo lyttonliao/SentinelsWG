@@ -1,9 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from watchlists import views
+from watchlistitems import views
 
 
 router = DefaultRouter()
-router.register(r'watchlists', views.WatchlistViewSet)
 router.register(r'watchlistitems', views.WatchlistItemViewSet)

@@ -6,4 +6,4 @@ from tickers import views
 
 router = DefaultRouter()
 router.register(r'ticker', views.TickerViewSet)
-router.register(r'tickerhistoricinfo', views.TickerHistoricInfoViewSet)
+router.register(r'tickerhistoricinfo', views.TickerHistoricInfoViewSet, basename='tickerhistoricinfo')

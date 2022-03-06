@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                         PermissionsMixin
 from django.conf import settings
-# from django.db.models.signals import post_save
-# from django.dispatch import receiver
 
 
 class UserManager(BaseUserManager):
@@ -18,48 +16,17 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, email, password):
-        user = self.create_user(email, password)
-        user.is_staff = True
-        user.is_superuser = True
-        user.save(using=self._db)
-
-        return user
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    """Custom user model that supports using email instead of username"""
-    email = models.EmailField(max_length=255, unique=True)
-    name = models.CharField(max_length=255)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    objects = UserManager()
-
-    USERNAME_FIELD = 'email'
-
-    def __str__(self):
-        return self.email
-
-
-# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-# def create_auth_token(sender, instance=None, created=False, **kwargs):
-#     if created:
-#         Token.objects.create(user=instance)
-
-        
-class Watchlist(models.Model):
-    """Create watchlist to track the commodity"""
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        primary_key=True
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.user.email
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError(_('Superuser must have is_staff=True.'))
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError(_('Superuser must have is_superuser=True.'))
+        return self.create_user(email, password, **extra_fields)
 
 
 class Ticker(models.Model):
@@ -70,10 +37,27 @@ class Ticker(models.Model):
         return self.symbol
 
 
+class User(AbstractBaseUser, PermissionsMixin):
+    """Custom user model that supports using email instead of username"""
+    email = models.EmailField(max_length=255, unique=True)
+    first_name = models.CharField(max_length=255, null=True, blank=True, default=None)
+    last_name = models.CharField(max_length=255, null=True, blank=True, default=None)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    tickers = models.ManyToManyField(Ticker, through='WatchlistItem')
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+
+    def __str__(self):
+        return self.email
+
 class WatchlistItem(models.Model):
     """List of information to show when adding item to Watchlist"""
-    watchlist = models.ForeignKey(
-        Watchlist,
+    user = models.ForeignKey(
+        User,
         related_name='watchlistitems',
         on_delete=models.CASCADE
     )
@@ -85,16 +69,17 @@ class WatchlistItem(models.Model):
     created_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.symbol
+        return self.ticker.symbol
 
 
 class TickerHistoricInfo(models.Model):
     """Stores years of stock info for strategic testing"""
     ticker = models.ForeignKey(
         Ticker,
+        related_name='ticker_historic_info',
         on_delete=models.CASCADE,
     )
-    date = models.CharField(max_length=10)
+    date = models.DateField(max_length=10)
     open_price = models.DecimalField(max_digits=8, decimal_places=2)
     high_price = models.DecimalField(max_digits=8, decimal_places=2)
     low_price = models.DecimalField(max_digits=8, decimal_places=2)

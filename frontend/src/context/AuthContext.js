@@ -31,40 +31,43 @@ export const AuthProvider = ({children}) => {
             setAuthTokens(data)
             setUser(jwt_decode(data.access))
             localStorage.setItem('authTokens', JSON.stringify(data))
-            // setUser(fetchUserInfo())
             navigate('/')
         } else {
             alert('Something went wrong!')
         }
     }
 
+    let registerUser = async(e) => {
+        e.preventDefault();
+        let response = await fetch('http://127.0.0.1:8000/dj-rest-auth/registration/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'email': e.target.email.value,
+                'password1': e.target.password1.value,
+                'password2': e.target.password2.value,
+                'first_name': e.target.first_name.value,
+                'last_name': e.target.last_name.value
+            })
+        })
+
+        if (response.status === 200) {
+            navigate('/login')
+        } else {
+            alert('Registration incomplete')
+        }
+    }
+
 
     let logoutUser = (e) => {
-        e.stopPropagation();
         e.preventDefault();
         setAuthTokens(null)
         setUser(null)
         localStorage.removeItem('authTokens')
+        navigate('/')
     }
-
-    
-    // let fetchUserInfo = async() => {
-    //     let user_id = jwt_decode(localStorage.getItem('authTokens').access).user_id
-    //     let response = await fetch(`http://127.0.0.1:8000/api/users/${user_id}`, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Authorization': 'Bearer ' + String(authTokens.access)
-    //         },
-    //     })
-    //     let data = await response.json()
-
-    //     if (response.status === 200) {
-    //         setUser(data)
-    //     } else if (response.statusText === 'Unauthorized') {
-    //         logoutUser()
-    //     }
-    // }
 
 
     let updateToken = async() => {
@@ -81,7 +84,6 @@ export const AuthProvider = ({children}) => {
             setAuthTokens(data)
             setUser(jwt_decode(data.access))
             localStorage.setItem('authTokens', JSON.stringify(data))
-            // setUser(fetchUserInfo())
         } else {
             setAuthTokens(null)
             setUser(null)
@@ -99,6 +101,7 @@ export const AuthProvider = ({children}) => {
         authTokens: authTokens,
         loginUser: loginUser,
         logoutUser: logoutUser,
+        registerUser: registerUser,
     }
 
 
@@ -114,7 +117,7 @@ export const AuthProvider = ({children}) => {
             }
         }, fourMinutes)
         return () => clearInterval(interval)
-
+        //eslint-disable-next-line
     }, [authTokens, loading])
 
 

@@ -8,20 +8,27 @@ from .serializers import TickerSerializer, TickerHistoricInfoSerializer
 class TickerViewSet(mixins.CreateModelMixin,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
-                    mixins.DestroyModelMixin,
                     viewsets.GenericViewSet):
     """Manages tickers in the database"""
-    permission_classes = (IsAuthenticated,)
     serializer_class = TickerSerializer
     queryset = Ticker.objects.all()
+
 
 
 class TickerHistoricInfoViewSet(mixins.CreateModelMixin,
                                 mixins.ListModelMixin,
                                 mixins.RetrieveModelMixin,
-                                mixins.DestroyModelMixin,
                                 viewsets.GenericViewSet):
     """Manages historic data for tickers"""
-    permission_classes = (IsAuthenticated,)
     serializer_class = TickerHistoricInfoSerializer
-    queryset = TickerHistoricInfo.objects.all()
+
+
+    def get_queryset(self):
+        ticker = self.request.query_params.get('ticker', None)
+        latest = self.request.query_params.get('latest', None)
+        queryset = TickerHistoricInfo.objects.all()
+        if ticker:
+            queryset = queryset.filter(ticker__symbol=ticker)
+        if latest:
+            queryset = [queryset.latest('date')]
+        return queryset

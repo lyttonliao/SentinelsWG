@@ -3,19 +3,44 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import update_last_login
 
 from rest_framework import serializers
+from watchlistitems.serializers import WatchlistItemSerializer
+from tickers.serializers import TickerSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.settings import api_settings
+from dj_rest_auth.registration.serializers import RegisterSerializer
+
+
+class CustomRegisterSerializer(RegisterSerializer):
+    first_name = serializers.CharField(
+        required=True,
+        max_length=255
+    )
+    last_name = serializers.CharField(
+        required=True,
+        max_length=255
+    )
+
+    def get_cleaned_data(self):
+        data_dict = super().get_cleaned_data()
+        data_dict['first_name'] = self.validated_data.get('first_name', '')
+        data_dict['last_name'] = self.validated_data.get('last_name', '')
+        return data_dict
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the users object"""
-    watchlist = serializers.PrimaryKeyRelatedField(
+    watchlistitems = WatchlistItemSerializer(
+        many=True,
         read_only=True
+    )
+    tickers = TickerSerializer(
+        many=True,
+        read_only=True    
     )
 
     class Meta:
         model = get_user_model()
-        fields = ('email', 'password', 'name', 'watchlist')
+        fields = ('email', 'password', 'first_name', 'last_name', 'watchlistitems', 'tickers')
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         depth = 2
     
@@ -41,4 +66,5 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         token['email'] = user.email
+        token['name'] = user.first_name + ' ' + user.last_name
         return token
