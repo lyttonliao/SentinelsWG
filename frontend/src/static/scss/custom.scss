@@ -31,3 +31,8 @@ $theme-colors: map-merge($custom-theme-colors, $theme-colors);
 .trigger:active {
     border: $success 1px solid;
 }
+
+.active-stock {
+    border: $success 1px solid;
+    background-color: rgba($gray-200, 0.25);
+}

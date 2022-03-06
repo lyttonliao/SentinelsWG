@@ -6,6 +6,7 @@ const Watchlist = () => {
     let [watchlistitems, setWatchlistItems] = useState([])
     let [currentTickerInfo, setCurrentTickerInfo] = useState([])
     let [loading, setLoading] = useState(true)
+    let [activeStock, setActiveStock] = useState(() => localStorage.getItem('activeStock') ? localStorage.getItem('activeStock') : null)
     let { user, authTokens, logoutUser } = useContext(AuthContext)
 
     let getWatchlist = async() => {
@@ -28,6 +29,20 @@ const Watchlist = () => {
         if (loading) {
             setLoading(false)
         }
+    }
+
+
+    let toggleActive = (e) => {
+        const target = e.currentTarget
+        if (activeStock === target) return;
+
+        let currStock = document.getElementById(activeStock)
+        if (currStock) {
+            currStock.classList.remove('active-stock')
+        }
+        target.classList.add('active-stock')
+        localStorage.setItem('activeStock', target.id)
+        setActiveStock(target.id)
     }
 
 
@@ -81,10 +96,14 @@ const Watchlist = () => {
                 </span>
             </div>
             {currentTickerInfo.length > 0 ? (
-                <div className="container">
-
+                <div className="container overflow-auto">
+                    <div className="row py-2 border-bottom border-light">
+                        <div className="col">Stock</div>
+                        <div className="col">Close</div>
+                        <div className="col">Open</div>
+                    </div>
                     {currentTickerInfo.map((ticker, i) => (
-                        <div key={i} className={`row trigger `}>
+                        <div key={i} onClick={toggleActive} className="row trigger" id={ticker.ticker}>
                             <div className="col">
                                 {ticker.ticker}
                             </div>
