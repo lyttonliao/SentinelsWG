@@ -16,21 +16,34 @@ export const AuthProvider = ({children}) => {
 
     let navigate = useNavigate()
 
+
+    function postLoginActions(res_data) {
+        setAuthTokens(res_data)
+        setUser(jwt_decode(res_data.access))
+        localStorage.setItem('authTokens', JSON.stringify(res_data))
+    }
+
+    function postLogoutActions() {
+        setAuthTokens(null)
+        setUser(null)
+        localStorage.removeItem('authTokens')
+    }
+
+
     let loginUser = async(e) => {
-        e.preventDefault();
+        e.preventDefault()
         let response = await fetch('http://127.0.0.1:8000/token/', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({'email': e.target.email.value, 'password': e.target.password.value})
         })
         let data = await response.json()
 
         if (response.status === 200) {
-            setAuthTokens(data)
-            setUser(jwt_decode(data.access))
-            localStorage.setItem('authTokens', JSON.stringify(data))
+            postLoginActions(data)
             navigate('/')
         } else {
             alert('Something went wrong!')
@@ -38,7 +51,7 @@ export const AuthProvider = ({children}) => {
     }
 
     let registerUser = async(e) => {
-        e.preventDefault();
+        e.preventDefault()
         let response = await fetch('http://127.0.0.1:8000/dj-rest-auth/registration/', {
             method: 'POST',
             headers: {
@@ -53,8 +66,11 @@ export const AuthProvider = ({children}) => {
             })
         })
 
+        let data = await response.json()
+
         if (response.status === 200) {
-            navigate('/login')
+            postLoginActions(data)
+            navigate('/')
         } else {
             alert('Registration incomplete')
         }
@@ -62,10 +78,8 @@ export const AuthProvider = ({children}) => {
 
 
     let logoutUser = (e) => {
-        e.preventDefault();
-        setAuthTokens(null)
-        setUser(null)
-        localStorage.removeItem('authTokens')
+        e.preventDefault()
+        postLogoutActions()
         navigate('/')
     }
 
@@ -81,13 +95,9 @@ export const AuthProvider = ({children}) => {
         let data = await response.json()
 
         if (response.status === 200) {
-            setAuthTokens(data)
-            setUser(jwt_decode(data.access))
-            localStorage.setItem('authTokens', JSON.stringify(data))
+            postLoginActions(data)
         } else {
-            setAuthTokens(null)
-            setUser(null)
-            localStorage.removeItem('authTokens')
+            postLogoutActions()
         }
 
         if (loading) {

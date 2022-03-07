@@ -23,13 +23,13 @@ function Header() {
                     <div className="d-flex">
                         <p className="m-auto">{user.name}</p>
                         <a href="/" className="h-100 ms-3 me-5" onClick={logoutUser}>
-                            <button className="btn btn-light">Log Out</button>
+                            <button className="btn btn-primary">Log Out</button>
                         </a>
                     </div>
                 ) : (
                     <div className="d-flex">
-                        <a className="ms-5 me-2 h-100" href="/login"><button className="btn btn-light">Sign In</button></a>
-                        <a className="ms-2 me-5 h-100" href="/register"><button className="btn btn-light">Sign Up</button></a>
+                        <a className="ms-5 me-2 h-100" href="/login"><button className="btn btn-primary">Sign In</button></a>
+                        <a className="ms-2 me-5 h-100" href="/register"><button className="btn btn-primary">Sign Up</button></a>
                     </div>
                 )}
             </div>

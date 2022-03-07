@@ -10,6 +10,11 @@ const Watchlist = () => {
     let { user, authTokens, logoutUser } = useContext(AuthContext)
 
     let getWatchlist = async() => {
+        if (!user) {
+            setWatchlistItems([])
+            return
+        }
+
         let response = await fetch(`http://127.0.0.1:8000/api/users/${user.user_id}/`, {
             method: 'GET',
             headers: {
@@ -24,10 +29,6 @@ const Watchlist = () => {
             setWatchlistItems(data.watchlistitems)
         } else if (response.statusText === 'Unauthorized') {
             logoutUser()
-        }
-
-        if (loading) {
-            setLoading(false)
         }
     }
 
@@ -47,9 +48,7 @@ const Watchlist = () => {
 
 
     useEffect(() => {
-        if (loading) {
-            getWatchlist()
-        }
+        getWatchlist()
         //eslint-disable-next-line
     }, [user, loading])
 
@@ -59,7 +58,7 @@ const Watchlist = () => {
 
         Promise.all(tickerList.map(async ticker => {
             return (
-                fetch(`http://127.0.0.1:8000/api/tickerhistoricinfo/?ticker=${ticker}&latest=True`, {
+                fetch(`http://127.0.0.1:8000/api/tickerhistoricinfo/?ticker=${ticker}&latest=True/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -78,12 +77,21 @@ const Watchlist = () => {
             })
         })).then(values => {
             setCurrentTickerInfo(values)
+            if (loading) {
+                setLoading(false)
+            }
         }).catch((e) => {
-            alert('Could not retrieve data')
+            alert(e)
         })
-        //eslint-disable-next-line
     }, [watchlistitems])
 
+    if (loading) {
+        return (
+            <div>
+                Please wait a moment!
+            </div>
+        )
+    }
     return (
         <div className="watchlist h-50 border border-light border-3">
             <div className="d-flex border-bottom border-light border-2">
@@ -103,7 +111,12 @@ const Watchlist = () => {
                         <div className="col">Open</div>
                     </div>
                     {currentTickerInfo.map((ticker, i) => (
-                        <div key={i} onClick={toggleActive} className="row trigger" id={ticker.ticker}>
+                        <div 
+                            key={i} 
+                            onClick={toggleActive} 
+                            className={`row trigger ${ticker.ticker === activeStock ? 'active-stock' : ''}`} 
+                            id={ticker.ticker}
+                        >
                             <div className="col">
                                 {ticker.ticker}
                             </div>
@@ -117,7 +130,9 @@ const Watchlist = () => {
                     ))}
                 </div>
             ) : (
-                null
+                <div>
+                    {loading ? <div>Sign up to get started!</div> : null}
+                </div>
             )}
         </div>
     )
