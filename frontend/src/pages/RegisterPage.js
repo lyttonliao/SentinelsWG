@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
 import AuthContext from '../context/AuthContext';
 
-const LoginPage = () => {
-    let { registerUser } = useContext(AuthContext)
+const RegisterPage = () => {
+    let { registerUser, errorMessages } = useContext(AuthContext)
     const [email, changeEmail] = useState('')
     const [firstName, changeFirstName] = useState('')
     const [lastName, changeLastName] = useState('')
@@ -20,6 +20,11 @@ const LoginPage = () => {
                         onChange={(e) => changeEmail(e.target.value)}
                         value={email}
                     />
+                    {errorMessages.hasOwnProperty('email') &&
+                        <small className="text-danger">
+                            {errorMessages.email}
+                        </small>
+                    }
                 </div>
                 <div className="d-inline-flex mb-4">
                     <div className="me-1">
@@ -32,10 +37,10 @@ const LoginPage = () => {
                             value={firstName}
                         />
                     </div>
-                    <div classNamee="ms-1">
+                    <div className="ms-1">
                         <label htmlFor="last-name" className="form-label">Last Name</label>
                         <input
-                            type="email" 
+                            type="text" 
                             className="form-control"
                             id="last-name"
                             onChange={(e) => changeLastName(e.target.value)}
@@ -50,6 +55,11 @@ const LoginPage = () => {
                         className="form-control"
                         id="password-input-1"
                     />
+                    {errorMessages.hasOwnProperty('password1') &&
+                        <small className="text-danger">
+                            {errorMessages.password1}
+                        </small>
+                    }
                 </div>
                 <div className="mb-4">
                     <label htmlFor="password-input-2" className="form-label">Re-enter your password</label>
@@ -58,6 +68,11 @@ const LoginPage = () => {
                         className="form-control"
                         id="password-input-2"
                     />
+                    {errorMessages.hasOwnProperty('non_field_errors') && 
+                        <small className="text-danger">
+                            {errorMessages.non_field_errors}
+                        </small>
+                    }
                 </div>
                 <button type="submit" className="btn btn-primary float-end px-4">Sign Up</button>
             </form>
@@ -65,4 +80,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default RegisterPage;

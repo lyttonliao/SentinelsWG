@@ -9,10 +9,10 @@ export default AuthContext;
 
 export const AuthProvider = ({children}) => {
 
-    let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
-    let [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')).access : null)
-    
-    let [loading, setLoading] = useState(true)
+    const [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
+    const [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')).access : null)
+    const [loading, setLoading] = useState(true)
+    const [errorMessages, setErrorMessages] = useState({})
 
     let navigate = useNavigate()
 
@@ -29,16 +29,21 @@ export const AuthProvider = ({children}) => {
         localStorage.removeItem('authTokens')
     }
 
+    function capitalizeName(name) {
+        return name[0].toUpperCase() + name.slice(1).toLowerCase()
+    }
+
 
     let loginUser = async(e) => {
         e.preventDefault()
-        let response = await fetch('http://127.0.0.1:8000/token/', {
+        const response = await fetch('http://127.0.0.1:8000/token/', {
             method: 'POST',
+            credentials: 'omit',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify({'email': e.target.email.value, 'password': e.target.password.value})
+            body: JSON.stringify({'email': e.target[0].value, 'password': e.target[1].value})
         })
         let data = await response.json()
 
@@ -46,33 +51,32 @@ export const AuthProvider = ({children}) => {
             postLoginActions(data)
             navigate('/')
         } else {
-            alert('Something went wrong!')
+            setErrorMessages(data)
         }
     }
 
+
     let registerUser = async(e) => {
         e.preventDefault()
-        let response = await fetch('http://127.0.0.1:8000/dj-rest-auth/registration/', {
+        const response = await fetch('http://127.0.0.1:8000/dj-rest-auth/registration/', {
             method: 'POST',
+            credentials: 'omit',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
-                'email': e.target.email.value,
-                'password1': e.target.password1.value,
-                'password2': e.target.password2.value,
-                'first_name': e.target.first_name.value,
-                'last_name': e.target.last_name.value
+                'email': e.target[0].value,
+                'first_name': capitalizeName(e.target[1].value),
+                'last_name': capitalizeName(e.target[2].value),
+                'password1': e.target[3].value,
+                'password2': e.target[4].value,
             })
         })
-
         let data = await response.json()
 
-        if (response.status === 200) {
-            postLoginActions(data)
-            navigate('/')
-        } else {
-            alert('Registration incomplete')
+        if (!response.ok) {
+            setErrorMessages(data)
         }
     }
 
@@ -109,6 +113,7 @@ export const AuthProvider = ({children}) => {
     let contextData = {
         user: user,
         authTokens: authTokens,
+        errorMessages: errorMessages,
         loginUser: loginUser,
         logoutUser: logoutUser,
         registerUser: registerUser,
