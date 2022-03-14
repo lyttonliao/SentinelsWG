@@ -83,6 +83,7 @@ const Watchlist = () => {
         }).catch((e) => {
             alert(e)
         })
+        //eslint-disable-next-line
     }, [watchlistitems])
 
     if (loading) {
@@ -93,7 +94,7 @@ const Watchlist = () => {
         )
     }
     return (
-        <div className="watchlist h-50 border border-light border-3">
+        <div className="watchlist flex-shrink-0 h-50 border border-light border-3">
             <div className="d-flex border-bottom border-light border-2">
                 <h5 className="py-2 mb-0 w-50 text-center border-light border-end border-2">Watchlist</h5>
                 <span className="w-50 p-2 text-center trigger">
@@ -131,7 +132,7 @@ const Watchlist = () => {
                 </div>
             ) : (
                 <div>
-                    {loading ? <div>Sign up to get started!</div> : null}
+                    {!user && <h3 className="px-4 mt-5 lh-base text-center">Sign in or Sign up <br></br> to get started!</h3>}
                 </div>
             )}
         </div>

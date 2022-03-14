@@ -9,8 +9,8 @@ const LoginPage = () => {
     return (
         <div className="position-absolute top-50 start-50 translate-middle col-10 col-lg-3">
             <div className="mb-4">
-                <h2 className="ms-3">Welcome Back,</h2>
-                <h3 className="text-end me-3">-Sentinels</h3>
+                <h2 className="mx-3 text-center">Trust Sentinels,</h2>
+                <h3 className="text-center mx-3">To Safeguard Your Future</h3>
             </div>
             {errorMessages.hasOwnProperty('detail') && 
                 <small className="text-danger">{errorMessages.detail}</small>

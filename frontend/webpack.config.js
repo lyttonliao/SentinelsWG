@@ -16,6 +16,12 @@ module.exports = {
                     loader: "babel-loader",
                 },
             },
+            {
+                test: /\.m?js/,
+                resolve: {
+                    fullySpecified: false
+                }
+            },
         ],
     },
     optimization: {
@@ -23,9 +29,6 @@ module.exports = {
     },
     devtool: 'source-map',
     resolve: {
-        extensions: ['.js', '.jsx', '*']
+        extensions: ['.mjs', '.js', '.jsx', '*']
     },
-    plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-    ],
 };
