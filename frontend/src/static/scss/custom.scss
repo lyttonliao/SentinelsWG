@@ -36,3 +36,7 @@ $light: #6c757d;
     border: $success 1px solid;
     background-color: rgba($gray-200, 0.25);
 }
+
+.chart-legend {
+    z-index: 10
+}

@@ -1,11 +1,15 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { createChart, CrosshairMode } from 'lightweight-charts'
 
 
-function CandleStickChart({ data }) {
+const CandleStickChart = ({ data }) => {
+    const [ legend, setLegend ] = useState(null)
+
     const chartContainerRef = useRef()
     const chart = useRef()
     const resizeObserver = useRef()
+
+    const months = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun", 7: "Jul", 8: "Aug", 9: "Sept", 10: "Oct", 11: "Nov", 12: "Dec"}
 
     useEffect(() => {
         chart.current = createChart(chartContainerRef.current, {
@@ -78,7 +82,7 @@ function CandleStickChart({ data }) {
         volumeSeries.setData(volumeData);
     }, [])
 
-  // Resize chart on container resizes.
+    // Resize chart on container resizes.
     useEffect(() => {
         resizeObserver.current = new ResizeObserver(entries => {
             const { width, height } = entries[0].contentRect;
@@ -94,12 +98,46 @@ function CandleStickChart({ data }) {
     }, []);
 
 
+    // Updating legend when crosshair moves 
+    useEffect(() => {
+        chart.current.subscribeCrosshairMove(function(param) {
+            if (param.point === undefined || !param.time || param.point.x < 0 || param.point.x > chart.current.clientWidth || param.point.y < 0 || param.point.y > chart.current.clientHeight) {
+                chart.current.isCrosshairVisible = false
+                let lastBar = data[data.length - 1]
+                let time = data[data.length - 1].date
+                const date = months[parseInt(time.slice(5,7))] + ` ${time.slice(8)}, ${time.slice(0,4)}`
+                setLegend({
+                    "time": date,
+                    "open": lastBar.open,
+                    "high": lastBar.high,
+                    "close": lastBar.close,
+                    "low": lastBar.low
+                })
+            } else {
+                chart.current.isCrosshairVisible = true
+                const iterator = param.seriesPrices.values()
+                const date = months[param.time['month']] + ` ${param.time['day']}, ${param.time['year']}`
+                setLegend({
+                    "time": date,
+                    ...iterator.next().value
+                })
+            }
+        })
+    }, [])
+
     return (
         <div className="d-flex flex-column h-50 flex-grow-1 border border-light">
-            <div className="">
-
+            <div ref={chartContainerRef} className="chart-container position-relative flex-grow-1 w-100 h-100">
+                {legend && 
+                    <div className="chart-legend position-absolute d-flex-inline top-0 start-0">
+                        <small className="ms-2 me-1">{legend.time}</small>
+                        <small className="mx-1">O {legend.open}</small>
+                        <small className="mx-1">C {legend.close}</small>
+                        <small className="mx-1">Hi {legend.high}</small>
+                        <small className="mx-1">Lo {legend.low}</small>
+                    </div>
+                }
             </div>
-            <div ref={chartContainerRef} className="chart-container flex-grow-1 w-100 h-100"/>
         </div>
     );
 }

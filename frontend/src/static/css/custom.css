@@ -11975,3 +11975,7 @@ fieldset:disabled .btn {
   border: #198754 1px solid;
   background-color: rgba(233, 236, 239, 0.25);
 }
+
+.chart-legend {
+  z-index: 10;
+}
