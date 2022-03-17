@@ -25,18 +25,35 @@ $light: #6c757d;
 .trigger:hover {
     background-color: rgba($gray-200, 0.25);
     pointer-events: auto;
-    cursor: pointer;
+    cursor: default;
 };
 
-.trigger:active {
-    border: $success 1px solid;
-}
-
 .active-stock {
-    border: $success 1px solid;
+    border: $success 2px solid !important;
     background-color: rgba($gray-200, 0.25);
 }
 
 .chart-legend {
     z-index: 10
+}
+
+.searchInput {
+    width: 100%;
+    outline: none;
+    border: 0;
+    font-size: 20px;
+}
+
+.modal-body {
+    max-height: 800px;
+    color: black;
+    overflow: auto;
+}
+
+.searchItem:not(:last-child) {
+    border-bottom: 1px $light solid;
+}
+
+.searchItem:hover {
+    background-color: rgba($gray-600, 0.25)
 }

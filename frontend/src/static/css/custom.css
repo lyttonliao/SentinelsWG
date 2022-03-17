@@ -11964,18 +11964,35 @@ fieldset:disabled .btn {
 .trigger:hover {
   background-color: rgba(233, 236, 239, 0.25);
   pointer-events: auto;
-  cursor: pointer;
-}
-
-.trigger:active {
-  border: #198754 1px solid;
+  cursor: default;
 }
 
 .active-stock {
-  border: #198754 1px solid;
+  border: #198754 2px solid !important;
   background-color: rgba(233, 236, 239, 0.25);
 }
 
 .chart-legend {
   z-index: 10;
+}
+
+.searchInput {
+  width: 100%;
+  outline: none;
+  border: 0;
+  font-size: 20px;
+}
+
+.modal-body {
+  max-height: 800px;
+  color: black;
+  overflow: auto;
+}
+
+.searchItem:not(:last-child) {
+  border-bottom: 1px #6c757d solid;
+}
+
+.searchItem:hover {
+  background-color: rgba(108, 117, 125, 0.25);
 }

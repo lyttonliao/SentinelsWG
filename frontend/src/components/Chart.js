@@ -1,30 +1,21 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import CandleStickChart from "./charts/CandleStick"
 import { getData } from "./utils/utils"
 
+function Chart() {
+    const [ chartData, setChartData ] = useState([])
 
-class Chart extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            data: []
-        }
-    }
 
-    componentDidMount() {
-        getData().then(data => {
-            this.setState({data: data})
-        })
-    }
+    useEffect(() => {
+        getData().then(data => setChartData(data))
+    }, [])
 
-    render() {
-        if (this.state.data.length === 0) {
-            return <div>Loading...</div>
-        }
-        return (
-            <CandleStickChart data={this.state.data} />
-        )
+    if (chartData.length === 0) {
+        return <div>Loading...</div>
     }
+    return (
+        <CandleStickChart data={chartData} />
+    )
 }
 
 export default Chart

@@ -3,8 +3,8 @@ import AuthContext from '../context/AuthContext';
 
 const LoginPage = () => {
     let { loginUser, errorMessages } = useContext(AuthContext)
-    const [email, changeEmail] = useState('')
-    const [password, changePassword] = useState('')
+    const [ email, changeEmail ] = useState('')
+    const [ password, changePassword ] = useState('')
 
     return (
         <div className="position-absolute top-50 start-50 translate-middle col-10 col-lg-3">

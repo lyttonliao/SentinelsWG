@@ -10,6 +10,7 @@ html, body {
 #main {
     height: 100%;
     background-color: rgb(6, 13, 19);
+    font-family: "roboto";
     color: white;
 }
 

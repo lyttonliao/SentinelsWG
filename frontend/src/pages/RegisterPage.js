@@ -3,9 +3,9 @@ import AuthContext from '../context/AuthContext';
 
 const RegisterPage = () => {
     let { registerUser, errorMessages } = useContext(AuthContext)
-    const [email, changeEmail] = useState('')
-    const [firstName, changeFirstName] = useState('')
-    const [lastName, changeLastName] = useState('')
+    const [ email, changeEmail ] = useState('')
+    const [ firstName, changeFirstName ] = useState('')
+    const [ lastName, changeLastName ] = useState('')
 
     return (
         <div className="position-absolute top-50 start-50 translate-middle col-10 col-lg-3">
