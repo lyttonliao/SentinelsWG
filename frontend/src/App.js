@@ -9,6 +9,7 @@ import {
     Route, 
 } from "react-router-dom";
 import { AuthProvider } from './context/AuthContext';
+import { AppContextProvider } from './context/AppContext';
 // import PrivateRoute from './utils/PrivateRoute';
 import AuthRoute from './utils/AuthRoute';
 import './static/css/index.css';
@@ -20,34 +21,28 @@ class App extends React.Component {
         return (
             <Router>
                 <AuthProvider>
-                    <Header />
-                    <Routes>
-                        {/* <Route 
-                            path="/watchlist" 
-                            element={
-                                <PrivateRoute>
-                                    <Watchlist />
-                                </PrivateRoute>
-                            } 
-                        /> */}
-                        <Route path="/" element={<LandingPage />} />
-                        <Route 
-                            path="/login" 
-                            element={
-                                <AuthRoute>
-                                    <LoginPage/>
-                                </AuthRoute>
-                            } 
-                        />
-                        <Route 
-                            path="/register" 
-                            element={
-                                <AuthRoute>
-                                    <RegisterPage/>
-                                </AuthRoute>
-                            } 
-                        />
-                    </Routes>
+                    <AppContextProvider>
+                        <Header />
+                        <Routes>
+                            <Route path="/" element={<LandingPage />} />
+                            <Route 
+                                path="/login" 
+                                element={
+                                    <AuthRoute>
+                                        <LoginPage/>
+                                    </AuthRoute>
+                                } 
+                            />
+                            <Route 
+                                path="/register" 
+                                element={
+                                    <AuthRoute>
+                                        <RegisterPage/>
+                                    </AuthRoute>
+                                } 
+                            />
+                        </Routes>
+                    </AppContextProvider>
                 </AuthProvider>
             </Router>
         );

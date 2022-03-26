@@ -28,8 +28,8 @@ $light: #6c757d;
     cursor: default;
 };
 
-.active-stock {
-    border: $success 2px solid !important;
+.activeStock {
+    border: $primary 2px solid !important;
     background-color: rgba($gray-200, 0.25);
 }
 
@@ -45,15 +45,53 @@ $light: #6c757d;
 }
 
 .modal-body {
+    padding: 1rem 0;
+}
+
+.search-modal-body {
     max-height: 800px;
+    max-width: 500px;
     color: black;
     overflow: auto;
 }
 
-.searchItem:not(:last-child) {
+.technical-modal-body {
+    max-width: 500px;
+    max-height: 500px;
+    color: black;
+    overflow: auto;
+}
+
+.searchItem {
     border-bottom: 1px $light solid;
+    padding: .5rem 1rem;
 }
 
 .searchItem:hover {
     background-color: rgba($gray-600, 0.25)
+}
+
+.widgetItem {
+    text-align: center;
+    padding: .5rem 1rem;
+    border-bottom: 1px $light solid;
+    font-weight: bold;
+}
+
+.widgetItem:hover {
+    background-color: rgba($gray-200, 0.25);
+    pointer-events: auto;
+    cursor: default;
+}
+
+.technicalSelection {
+    padding: .25rem 1rem;
+}
+
+.technicalSelection:hover {
+    background-color: rgba($gray-600, 0.25);
+}
+
+.favorite {
+    fill: $success !important;
 }

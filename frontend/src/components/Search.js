@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import AppContext from '../context/AppContext';
 
 
 function Search() {
     const [ matches, setMatches ] = useState([])
     const [ errorMessage, setErrorMessage ] = useState('')
-    const isModalOpen = localStorage.getItem('searchActive')
+    const [ keywords, changeKeywords ] = useState('')
+    const { setStorageSymbol } = useContext(AppContext)
 
-    let searchKeyword = async (e) => {
+
+    async function searchKeyword(e) {
         e.preventDefault()
         let sym = e.target[0].value
-        // let response = await fetch(`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${sym}&apikey=${process.env.REACT_APP_ALPHAVANTAGE_APIKEY}`, {
-        let response = await fetch('searchsample.json', {
+        let response = await fetch(`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${sym}&apikey=${process.env.REACT_APP_ALPHAVANTAGE_APIKEY}`, {
             method: "GET",
             headers: {
                 'Content-Type': 'appliction/json',
@@ -36,42 +38,39 @@ function Search() {
         return (
             <div
                 key={i} 
-                className="row trigger py-2 searchItem" 
+                className="row trigger py-1 searchItem" 
                 value={symbol}
-                onClick={() => localStorage.setItem('activeStock', symbol)}
+                onClick={() => setStorageSymbol(symbol)}
                 data-toggle="modal" 
                 data-target="#searchModal"
             >
-                <div className="col-2">{symbol}</div>
-                <div className="col-6">{result["2. name"]}</div>
-                <div className="col-4">{result["3. type"]} - {result["4. region"]}</div>
+                <div className="col-3">{symbol}</div>
+                <div className="col-9">{result["2. name"]}</div>
             </div>
         )
     }
 
 
-    if (!isModalOpen) {
-        return 
-    }
     return (
         <div className="modal fade" id="searchModal" tabIndex="-1" role="dialog" aria-labelledby="searchLabel" aria-hidden="true">
-            <div className="modal-dialog modal-lg">
+            <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <form className="w-100" onSubmit={searchKeyword}>
+                        <form className="w-100" onSubmit={(e) => searchKeyword(e)}>
                             <input 
                                 className="searchInput"
                                 type="text"
                                 placeholder="Search Symbol..."
+                                onChange={(e) => changeKeywords(e.target.value)}
+                                value={keywords}
                             />
                         </form>
                     </div>
                     {matches.length > 0 &&
-                        <div className="modal-body">
-                            <div className="row mb-3">
-                                <div className="col-2">Symbol</div>
-                                <div className="col-6">Company / Name</div>
-                                <div className="col-4">Type - Region</div>      
+                        <div className="modal-body search-modal-body">
+                            <div className="row mb-3 px-3">
+                                <div className="col-3 fw-bold">Symbol</div>
+                                <div className="col-9 fw-bold">Company / Name</div>    
                             </div>
                             {matches.map((result, i) => {
                                 return listDivs(result, i)

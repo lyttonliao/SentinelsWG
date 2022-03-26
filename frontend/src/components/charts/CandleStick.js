@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { createChart, CrosshairMode } from 'lightweight-charts'
 
 
-const CandleStickChart = ({ data }) => {
-    const [ activeStock ] = useState(() => localStorage.getItem('activeStock') ? localStorage.getItem('activeStock') : null)
+const CandleStickChart = ({ symbol, data }) => {
     const chartContainerRef = useRef()
     const chart = useRef()
     const resizeObserver = useRef()
@@ -17,11 +16,11 @@ const CandleStickChart = ({ data }) => {
                             "open": lastBar.open,
                             "high": lastBar.high,
                             "close": lastBar.close,
-                            "low": lastBar.low
+                            "low": lastBar.low,
+                            "volume": lastBar.volume
                           }
     const [ legend, setLegend ] = useState(defaultLegend)
     
-
 
     useEffect(() => {
         chart.current = createChart(chartContainerRef.current, {
@@ -92,22 +91,22 @@ const CandleStickChart = ({ data }) => {
         })
 
         volumeSeries.setData(volumeData);
-    }, [])
+    })
+
 
     // Resize chart on container resizes.
     useEffect(() => {
         resizeObserver.current = new ResizeObserver(entries => {
+            if (entries.length === 0 || entries[0].target !== chartContainerRef.current) { return; }
+
             const { width, height } = entries[0].contentRect;
-            chart.current.applyOptions({ width, height });
-            setTimeout(() => {
-                chart.current.timeScale().fitContent();
-            }, 0);
-        });
+            chart.current.applyOptions({ width: width, height: height })
+        })
 
-        resizeObserver.current.observe(chartContainerRef.current);
+        resizeObserver.current.observe(chartContainerRef.current)
 
-        return () => resizeObserver.current.disconnect();
-    }, []);
+        return () => resizeObserver.current.disconnect()
+    }, [])
 
 
     // Updating legend when crosshair moves 
@@ -122,28 +121,33 @@ const CandleStickChart = ({ data }) => {
                 const date = months[param.time['month']] + ` ${param.time['day']}, ${param.time['year']}`
                 setLegend({
                     "time": date,
-                    ...iterator.next().value
+                    ...iterator.next().value,
+                    "volume": iterator.next().value
                 })
             }
         })
-    }, [])
+    })
+
 
     return (
-        <div className="d-flex flex-column h-50 flex-grow-1 border border-light">
-            <div ref={chartContainerRef} className="chart-container position-relative flex-grow-1 w-100 h-100">
-                {legend && 
-                    <div className="chart-legend position-absolute d-flex-inline top-0 start-0">
-                        <small className="ms-2 me-1 fs-6">{activeStock}</small>
+        <div ref={chartContainerRef} className="chart-container position-relative flex-grow-1 w-100 h-100">
+            {legend && 
+                <div className="chart-legend position-absolute top-0 start-0">
+                    <div className="d-flex-inline">
+                        <small className="ms-2 me-1 fs-6">{symbol}</small>
                         <small className="mx-1">{legend.time}</small>
-                        <small className="mx-1">O {legend.open}</small>
-                        <small className="mx-1">C {legend.close}</small>
-                        <small className="mx-1">Hi {legend.high}</small>
-                        <small className="mx-1">Lo {legend.low}</small>
+                        <small className="mx-1"><strong>O</strong> {legend.open}</small>
+                        <small className="mx-1"><strong>C</strong> {legend.close}</small>
+                        <small className="mx-1"><strong>H</strong> {legend.high}</small>
+                        <small className="mx-1"><strong>L</strong> {legend.low}</small>
                     </div>
-                }
-            </div>
+                    <div>
+                        <small className="mx-2"><strong>Vol</strong> {legend.volume}</small>
+                    </div>
+                </div>
+            }
         </div>
-    );
+    )
 }
 
 export default CandleStickChart;

@@ -14,7 +14,6 @@ class TickerViewSet(mixins.CreateModelMixin,
     queryset = Ticker.objects.all()
 
 
-
 class TickerHistoricInfoViewSet(mixins.CreateModelMixin,
                                 mixins.ListModelMixin,
                                 mixins.RetrieveModelMixin,

@@ -1,57 +1,27 @@
 import React, { useState, useEffect, useContext } from "react";
 import AuthContext from "../context/AuthContext";
+import AppContext from "../context/AppContext";
 
 
 function Watchlist() {
-    const [ watchlistitems, setWatchlistItems ] = useState([])
     const [ currentTickerInfo, setCurrentTickerInfo ] = useState([])
     const [ loading, setLoading ] = useState(true)
-    const [ activeStock, setActiveStock ] = useState(() => localStorage.getItem('activeStock') ? localStorage.getItem('activeStock') : null)
     const { user, authTokens, logoutUser } = useContext(AuthContext)
+    const { activeStock, setStorageSymbol, watchlistitems } = useContext(AppContext)
 
 
-    let getWatchlist = async() => {
-        if (!user) {
-            setWatchlistItems([])
-            return
-        }
-
-        let response = await fetch(`http://127.0.0.1:8000/api/users/${user.user_id}/`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + String(authTokens.access)
-            }
-        })
-        let data = await response.json()
-
-        if (response.status === 200) {
-            setWatchlistItems(data.watchlistitems)
-        } else if (response.statusText === 'Unauthorized') {
-            logoutUser()
-        }
-    }
-
-
-    let toggleActive = (e) => {
+    function toggleActive(e) {
         const target = e.currentTarget
-        if (activeStock === target) return;
+        if (activeStock === target.id) return;
 
         let currStock = document.getElementById(activeStock)
         if (currStock) {
-            currStock.classList.remove('active-stock')
+            currStock.classList.remove('activeStock')
         }
-        target.classList.add('active-stock')
-        localStorage.setItem('activeStock', target.id)
-        setActiveStock(target.id)
+
+        target.classList.add('activeStock')
+        setStorageSymbol(target.id)
     }
-
-
-    useEffect(() => {
-        getWatchlist()
-        //eslint-disable-next-line
-    }, [user, loading])
 
 
     useEffect(() => {
@@ -83,9 +53,11 @@ function Watchlist() {
             }
         }).catch((e) => {
             alert(e)
+            logoutUser()
         })
         //eslint-disable-next-line
     }, [watchlistitems])
+
 
     if (loading) {
         return (
@@ -116,7 +88,7 @@ function Watchlist() {
                         <div 
                             key={i} 
                             onClick={toggleActive} 
-                            className={`row border-bottom border-light trigger ${ticker.ticker === activeStock ? 'active-stock' : ''}`} 
+                            className={`row border-bottom border-light trigger ${ticker.ticker === activeStock ? 'activeStock' : ''}`} 
                             id={ticker.ticker}
                         >
                             <div className="col">

@@ -1,18 +1,19 @@
 import { createContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
+
 
 const AuthContext = createContext()
 
-export default AuthContext;
+export default AuthContext
 
 
 export const AuthProvider = ({children}) => {
 
-    const [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
-    const [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')).access : null)
-    const [loading, setLoading] = useState(true)
-    const [errorMessages, setErrorMessages] = useState({})
+    const [ authTokens, setAuthTokens ] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
+    const [ user, setUser ] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')).access : null)
+    const [ loading, setLoading ] = useState(true)
+    const [ errorMessages, setErrorMessages ] = useState({})
 
     let navigate = useNavigate()
 
