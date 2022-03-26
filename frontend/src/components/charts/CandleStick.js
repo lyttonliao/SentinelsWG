@@ -91,7 +91,7 @@ const CandleStickChart = ({ symbol, data }) => {
         })
 
         volumeSeries.setData(volumeData);
-    })
+    }, [])
 
 
     // Resize chart on container resizes.
@@ -126,7 +126,7 @@ const CandleStickChart = ({ symbol, data }) => {
                 })
             }
         })
-    })
+    }, [])
 
 
     return (

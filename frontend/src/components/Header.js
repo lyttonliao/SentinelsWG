@@ -12,14 +12,6 @@ function Header() {
             </a>
             <div>
                 {user ? (
-                    // <div className="dropdown mx-5 h-50">
-                    //     <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true">
-                    //         {user.email}
-                    //     </button>
-                    //     <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    //         <a className="dropdown-item" href="/" onClick={logoutUser}>Logout</a>
-                    //     </div>
-                    // </div>
                     <div className="d-flex">
                         <p className="m-auto">{user.name}</p>
                         <a href="/" className="h-100 ms-3 me-5" onClick={logoutUser}>

@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useContext } from "react"
 import CandleStickChart from "./charts/CandleStick"
-import { retrieveAPIData } from "./utils/utils"
+import { retrieveAPIData, retrieveTicker } from "./utils/utils"
 import AppContext from "../context/AppContext"
 import AuthContext from "../context/AuthContext"
 
 
 function Chart() {
     const [ display, setDisplay ] = useState('')
+    const [ ticker, setTicker ] = useState({})
     const [ chartData, setChartData ] = useState([])
     const [ externalSelections, setExternalSelections ] = useState([])
     const [ internalSelections, setInternalSelections ] = useState([])
     const { activeStock, watchlistitems } = useContext(AppContext)
-    const { authTokens } = useContext(AuthContext)
+    const { user, authTokens } = useContext(AuthContext)
 
 
     function addSelector(selectionState, selector) {
@@ -72,10 +73,10 @@ function Chart() {
 
 
     async function toggleWatch() {
-        if (isDisplayWatched) {
+        if (isDisplayWatched()) {
             const id = watchlistitems.filter(watchlistitem => watchlistitem.ticker === display)[0].id
             let response = await fetch(`http://127.0.0.1:8000/api/watchlistitems/${id}/`, {
-                method: "DELETE",
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -88,14 +89,17 @@ function Chart() {
             }
         } else {
             let response = await fetch('http://127.0.0.1:8000/api/watchlistitems/', {
-                method: "POST",
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'Authorization': 'Bearer ' + String(authTokens.access)
-                }
+                },
+                body: JSON.stringify({'user': user.id, 'ticker': ticker.id})
             })
 
+            let data = await response.json()
+            debugger 
             if (response.status !== 200) {
                 console.log(response.statusText)
             }
@@ -106,6 +110,7 @@ function Chart() {
     useEffect(() => {
         if (chartData.length === 0 || activeStock !== display) {
             retrieveAPIData(activeStock).then(data => setChartData(data))
+                .then(retrieveTicker(activeStock, authTokens).then(ticker => setTicker(ticker)))
             setDisplay(activeStock)
         }
 
@@ -114,7 +119,7 @@ function Chart() {
             setDisplay('')
         }
 
-    }, [activeStock, chartData.length, display])
+    }, [activeStock])
 
 
     if (chartData.length === 0) {

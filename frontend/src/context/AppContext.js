@@ -58,7 +58,7 @@ export const AppContextProvider = ({children}) => {
 
         return () => setWatchlistItems([])
         //eslint-disable-next-line
-    }, [user, watchlistitems])
+    }, [user])
 
 
     let contextData = {

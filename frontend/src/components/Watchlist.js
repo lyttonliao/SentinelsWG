@@ -25,36 +25,40 @@ function Watchlist() {
 
 
     useEffect(() => {
-        let tickerList = watchlistitems.map(watchlistitem => watchlistitem.ticker)
-
-        Promise.all(tickerList.map(async ticker => {
-            return (
-                fetch(`http://127.0.0.1:8000/api/tickerhistoricinfo/?ticker=${ticker}&latest=True/`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + String(authTokens.access)
-                    }
-                })
-            )
-            .then(res => {
-                if (res.status !== 200) {
-                    throw new Error(res.statusText)
-                }
-                return res.json()
-            })
-            .then(data => {
-                return data[0]
-            })
-        })).then(values => {
-            setCurrentTickerInfo(values)
-            if (loading) {
-                setLoading(false)
-            }
-        }).catch((e) => {
-            alert(e)
-            logoutUser()
+        let tickerList = watchlistitems.map(watchlistitem => {
+            return (watchlistitem.symbol)
         })
+
+        setCurrentTickerInfo(tickerList)
+        setLoading(false)
+        // Promise.all(tickerList.map(async ticker => {
+        //     return (
+        //         fetch(`http://127.0.0.1:8000/api/tickerhistoricinfo/?ticker=${ticker}&latest=True/`, {
+        //             method: 'GET',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'Authorization': 'Bearer ' + String(authTokens.access)
+        //             }
+        //         })
+        //     )
+        //     .then(res => {
+        //         if (res.status !== 200) {
+        //             throw new Error(res.statusText)
+        //         }
+        //         return res.json()
+        //     })
+        //     .then(data => {
+        //         return data[0]
+        //     })
+        // })).then(values => {
+        //     setCurrentTickerInfo(values)
+        //     if (loading) {
+        //         setLoading(false)
+        //     }
+        // }).catch((e) => {
+        //     alert(e)
+        //     logoutUser()
+        // })
         //eslint-disable-next-line
     }, [watchlistitems])
 
@@ -88,18 +92,18 @@ function Watchlist() {
                         <div 
                             key={i} 
                             onClick={toggleActive} 
-                            className={`row border-bottom border-light trigger ${ticker.ticker === activeStock ? 'activeStock' : ''}`} 
-                            id={ticker.ticker}
+                            className={`row border-bottom border-light trigger ${ticker === activeStock ? 'activeStock' : ''}`} 
+                            id={ticker}
                         >
                             <div className="col">
-                                {ticker.ticker}
+                                {ticker}
                             </div>
-                            <div className="col">
+                            {/* <div className="col">
                                 {ticker.close_price}
                             </div >
                             <div className="col">
                                 {ticker.high_price}
-                            </div>
+                            </div> */}
                         </div>
                     ))}
                 </div>

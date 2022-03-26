@@ -46,6 +46,43 @@ export async function retrieveAPIData(symbol) {
 }
 
 
+export async function retrieveTicker(symbol, authTokens) {
+    try {
+        const response = await fetch(`http://127.0.0.1:8000/api/tickers/?symbol=${symbol}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + String(authTokens.access)
+            }
+        })
+
+        let data = await response.json()
+
+        return data[0]
+    } catch (e) {
+        console.log(e)
+        const response = await fetch('http://127.0.0.1:8000/api/tickers/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + String(authTokens.access)
+            },
+            body: JSON.stringify({'symbol': symbol})
+        })
+
+        let data = await response.json()
+
+        if (response.status === 200) {
+            return data
+        } else {
+            console.log(response.statusText)
+        }
+    }
+}
+
+
 // export async function updateDBData(data) {
 //     let ticker = await fetch('http://127.0.0.1:8000/api/ticker/', {
 //         method: 'POST',

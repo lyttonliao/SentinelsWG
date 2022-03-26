@@ -11,7 +11,14 @@ class TickerViewSet(mixins.CreateModelMixin,
                     viewsets.GenericViewSet):
     """Manages tickers in the database"""
     serializer_class = TickerSerializer
-    queryset = Ticker.objects.all()
+
+
+    def get_queryset(self):
+        symbol = self.request.query_params.get('symbol', None)
+        queryset = Ticker.objects.all()
+        if symbol:
+            queryset = queryset.filter(symbol=symbol)
+        return queryset
 
 
 class TickerHistoricInfoViewSet(mixins.CreateModelMixin,
