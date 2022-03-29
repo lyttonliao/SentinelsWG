@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { createChart, CrosshairMode } from 'lightweight-charts'
 
 
-const CandleStickChart = ({ symbol, data }) => {
+const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
     const chartContainerRef = useRef()
     const chart = useRef()
     const resizeObserver = useRef()
@@ -17,10 +17,10 @@ const CandleStickChart = ({ symbol, data }) => {
                             "high": lastBar.high,
                             "close": lastBar.close,
                             "low": lastBar.low,
-                            "volume": lastBar.volume
+                            "volume": lastBar.volume,
                           }
     const [ legend, setLegend ] = useState(defaultLegend)
-    
+    const [ series, setSeries ] = useState({})
 
     useEffect(() => {
         chart.current = createChart(chartContainerRef.current, {
@@ -129,6 +129,132 @@ const CandleStickChart = ({ symbol, data }) => {
     }, [])
 
 
+    function simpleMovingAverage(n=20) {
+        const lineSeries = chart.current.addLineSeries({
+            lineWidth: 1,
+            lastValueVisible: false,
+            priceLineVisible: false,
+        }) 
+        let rollingSum = data.slice(0, n-1).reduce((a, b) => a + b.close, 0)
+        let SMAData = data.slice(n-1).map((d, i) => {
+            rollingSum = (i === 0) ? rollingSum + d.close : rollingSum + d.close - data[i-1].close
+            return({
+                "time": d.date,
+                "value": rollingSum / n,
+            })
+        })
+        lineSeries.setData(SMAData)
+        setSeries({...series, 'Simple Moving Average': lineSeries})
+    }
+
+
+    function exponentialMovingAverage(n=20, smoothing=2) {
+        const lineSeries = chart.current.addLineSeries({
+            lineWidth: 1,
+            lastValueVisible: false,
+            priceLineVisible: false,
+        })
+        let priorEMA = data.slice(0,n).reduce((a, b) => a + b.close, 0) / n
+        const multiplier = smoothing / (n + 1)
+        let EMAData = data.slice(n).map(d => {
+            const currEMA = d.close * multiplier + priorEMA * (1 - multiplier)
+            priorEMA = currEMA
+            return ({
+                "time": d.date,
+                "value": currEMA
+            })
+        })
+        lineSeries.setData(EMAData)
+        setSeries({...series, 'Exponential Moving Average': lineSeries})
+    }
+
+
+    function bollingerBands(n=20) {
+        let startData = data.slice(0, n - 1)
+        let recentSum = startData.reduce((a, b) => a + b.close, 0)
+        let recentSumOfSquares = startData.reduce((a, b) => a + (b.close - recentSum / n)**2, 0)
+        let upper = []
+        let average = []
+        let lower = []
+        data.slice(n-1).forEach((d, i) => {
+            recentSum = (i === 0) ? recentSum + d.close : recentSum + d.close - data[i-1].close
+            const avgSum = recentSum / n
+            recentSumOfSquares = (i === 0) ? recentSumOfSquares + (d.close - avgSum)**2 : recentSumOfSquares + (d.close - avgSum)**2 - (data[i-1].close - avgSum)**2
+            const twoSD = Math.sqrt(recentSumOfSquares / n) * 2
+            debugger
+            lower.push({"time": d.date, "value": (avgSum - twoSD)})
+            average.push({"time": d.date, "value": avgSum})
+            upper.push({"time": d.date, "value": (avgSum + twoSD)})
+        })
+        const lowerSeries = chart.current.addLineSeries({
+            lineWidth: 1,
+            lastValueVisible: false,
+            priceLineVisible: false,
+
+        })
+        const averageSeries = chart.current.addLineSeries({
+            lineWidth: 1,
+            lastValueVisible: false,
+            priceLineVisible: false,
+            color: "orange"
+        })
+        const upperSeries = chart.current.addLineSeries({
+            lineWidth: 1,
+            lastValueVisible: false,
+            priceLineVisible: false,
+        })
+
+        upperSeries.setData(upper)
+        averageSeries.setData(average)
+        lowerSeries.setData(lower)
+        setSeries({...series, 'Bollinger Bands': [lowerSeries, averageSeries, upperSeries]})
+    }
+
+
+    useEffect(() => {
+        for (let i = 0; i < techIndicators.length; i++) {
+            const curr = techIndicators[i]
+            if (!(curr in series)) {
+                if (curr === "Simple Moving Average") {
+                    simpleMovingAverage()
+                }
+                if (curr === 'Exponential Moving Average') {
+                    exponentialMovingAverage()
+                }
+                if (curr === 'Bollinger Bands') {
+                    bollingerBands()
+                }
+            }
+        }
+    }, [techIndicators])
+
+
+    function removeIndicator(indicator) {
+        const lineSeries = series[indicator]
+        chart.current.removeSeries(lineSeries)
+        const remainingSeries = {...series}
+        delete remainingSeries[indicator]
+        setSeries({...remainingSeries})
+        removeSelector('internalSelections', indicator)
+    }
+
+
+    function indicatorsLegend() {
+        return techIndicators.map((indicator, i) => {
+            return(
+                <div key={i} className="indicator">
+                    <small>{indicator}</small>
+                    <div className="indicatorClose" onClick={() => removeIndicator(indicator)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x" viewBox="0 0 16 16">
+                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                    </div>
+                </div>
+            )
+        })
+    }
+
+
     return (
         <div ref={chartContainerRef} className="chart-container position-relative flex-grow-1 w-100 h-100">
             {legend && 
@@ -143,6 +269,9 @@ const CandleStickChart = ({ symbol, data }) => {
                     </div>
                     <div>
                         <small className="mx-2"><strong>Vol</strong> {legend.volume}</small>
+                    </div>
+                    <div>
+                        {indicatorsLegend()}
                     </div>
                 </div>
             }

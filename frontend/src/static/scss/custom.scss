@@ -95,3 +95,28 @@ $light: #6c757d;
 .favorite {
     fill: $success !important;
 }
+
+.indicator {
+    display: flex;
+    width: fit-content;
+    padding: .15rem .5rem;
+    border-radius: .25rem !important;
+}
+
+.indicator:hover {
+    background-color: white;
+    color: black;
+}
+
+.indicatorClose {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 .25rem;
+    margin-left: .25rem;
+}
+
+.indicatorClose:hover {
+    background-color: $light;
+    border-radius: .25rem !important;
+}

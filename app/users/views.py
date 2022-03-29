@@ -16,8 +16,3 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
-
-# class CustomRegisterView(RegisterView):
-#     """Custom Register View inheriting from dj_rest_auth RegisterView"""
-#     serializer_class = CustomRegisterSerializer

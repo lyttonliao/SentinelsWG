@@ -1,4 +1,4 @@
-import { useContext, createContext, useState, useEffect } from 'react';
+import { useContext, createContext, useState, useEffect, useRef } from 'react';
 import AuthContext from './AuthContext';
 
 const AppContext = createContext()
@@ -11,7 +11,7 @@ export const AppContextProvider = ({children}) => {
     const [ activeStock, setActiveStock ] = useState(localStorage.getItem('activeStock') ?? '')
     const [ watchlistitems, setWatchlistItems ] = useState([])
     const { user, authTokens, logoutUser } = useContext(AuthContext)
-
+    const prevWatchlistitemsRef = useRef()
 
     function setStorageSymbol (symbol) {
         localStorage.setItem('activeStock', symbol)
@@ -20,10 +20,10 @@ export const AppContextProvider = ({children}) => {
 
 
     async function getWatchlist() {
-        if (!user) {
-            setWatchlistItems([])
-            return
-        }
+        // if (!user) {
+        //     setWatchlistItems([])
+        //     return
+        // }
 
         const response = await fetch(`http://127.0.0.1:8000/api/users/${user.user_id}/`, {
             method: 'GET',
@@ -52,11 +52,16 @@ export const AppContextProvider = ({children}) => {
 
     
     useEffect(() => {
-        if (watchlistitems.length === 0) {
+        if (!user) return
+        
+        if (watchlistitems.length === 0 || prevWatchlistitemsRef.current !== watchlistitems.length) {
             getWatchlist()
+            prevWatchlistitemsRef.current = watchlistitems.length
         }
 
-        return () => setWatchlistItems([])
+        return () => {
+            if (!user) setWatchlistItems([])
+        }
         //eslint-disable-next-line
     }, [user])
 
@@ -65,7 +70,7 @@ export const AppContextProvider = ({children}) => {
         activeStock: activeStock,
         setStorageSymbol: setStorageSymbol,
         watchlistitems: watchlistitems,
-        getWatchlist: getWatchlist
+        setWatchlistItems: setWatchlistItems
     }
 
     return (

@@ -11,22 +11,24 @@ function Chart() {
     const [ chartData, setChartData ] = useState([])
     const [ externalSelections, setExternalSelections ] = useState([])
     const [ internalSelections, setInternalSelections ] = useState([])
-    const { activeStock, watchlistitems } = useContext(AppContext)
+    const { activeStock, watchlistitems, setWatchlistItems } = useContext(AppContext)
     const { user, authTokens } = useContext(AuthContext)
 
 
-    function addSelector(selectionState, selector) {
-        const setFunction = selectionState === externalSelections ? setExternalSelections : setInternalSelections
-        if (selectionState.filter(x => x === selector).length === 0) {
+    function addSelector(selections, selector) {
+        const [setFunction, selectionState] = selections === 'externalSelections' ? [setExternalSelections, externalSelections] : [setInternalSelections, internalSelections]
+        if (selectionState.findIndex(x => x === selector) === -1) {
             setFunction([...selectionState, selector])
         }
     }
 
 
-    function removeSelector(selectionState, selector) {
-        const setFunction = selectionState === externalSelections ? setExternalSelections : setInternalSelections
-        const idx = selectionState.findIndex(selector)
-        setFunction([...selectionState.slice(0,idx), ...selectionState.slice(idx+1)])
+    function removeSelector(selections, selector) {
+        const [setFunction, selectionState] = selections === 'externalSelections' ? [setExternalSelections, externalSelections] : [setInternalSelections, internalSelections]
+        const idx = selectionState.findIndex(x => x === selector)
+        if (-1 < idx) {
+            setFunction([...selectionState.slice(0,idx), ...selectionState.slice(idx+1)])
+        }
     }
 
 
@@ -47,7 +49,7 @@ function Chart() {
 
         let allIndicators = [internal, external]
         for (let i = 0; i < allIndicators.length; i++) {
-            let selections = (i === 0) ? internalSelections : externalSelections
+            let selections = (i === 0) ? 'internalSelections' : 'externalSelections'
             allIndicators[i] = allIndicators[i].map((indicator, k) => {
                 return (
                     <div
@@ -68,13 +70,14 @@ function Chart() {
 
 
     function isDisplayWatched() {
-        return watchlistitems.filter(watchlistitem => watchlistitem.ticker === display).length > 0
+        return watchlistitems.filter(watchlistitem => watchlistitem.symbol === display).length > 0
     }
 
 
     async function toggleWatch() {
         if (isDisplayWatched()) {
-            const id = watchlistitems.filter(watchlistitem => watchlistitem.ticker === display)[0].id
+            const idx = watchlistitems.findIndex(watchlistitem => watchlistitem.symbol === display)
+            const id = watchlistitems[idx].id
             let response = await fetch(`http://127.0.0.1:8000/api/watchlistitems/${id}/`, {
                 method: 'DELETE',
                 headers: {
@@ -84,7 +87,9 @@ function Chart() {
                 }
             })
 
-            if (response.status !== 200) {
+            if (response.status === 204) {
+                setWatchlistItems([...watchlistitems.slice(0,idx), ...watchlistitems.slice(idx+1)])
+            } else {
                 console.log(response.statusText)
             }
         } else {
@@ -99,8 +104,10 @@ function Chart() {
             })
 
             let data = await response.json()
-            debugger 
-            if (response.status !== 200) {
+
+            if (response.status === 201) {
+                setWatchlistItems([...watchlistitems, data])
+            } else {
                 console.log(response.statusText)
             }
         }
@@ -110,7 +117,7 @@ function Chart() {
     useEffect(() => {
         if (chartData.length === 0 || activeStock !== display) {
             retrieveAPIData(activeStock).then(data => setChartData(data))
-                .then(retrieveTicker(activeStock, authTokens).then(ticker => setTicker(ticker)))
+            retrieveTicker(activeStock).then(ticker => setTicker(ticker[0]))
             setDisplay(activeStock)
         }
 
@@ -129,7 +136,7 @@ function Chart() {
     }
     return (
         <div className="d-flex h-50 flex-grow-1 border border-light">
-            <CandleStickChart symbol={display} data={chartData} techIndicator={internalSelections} removeSelector={removeSelector}/>
+            <CandleStickChart symbol={display} data={chartData} techIndicators={internalSelections} removeSelector={removeSelector}/>
             <div className="widgets">
                 <div className="widgetItem" onClick={() => toggleWatch()}>
                     {isDisplayWatched() ? 
@@ -151,7 +158,7 @@ function Chart() {
                 </div>
             </div>
             <div className="modal fade" id="widgetModal" tabIndex="-1" role="dialog" aria-labelledby="widgetLabel" aria-hidden="true">
-                <div className="modal-dialog">
+                <div className="modal-dialog position-absolute top-50 start-50 translate-middle">
                     <div className="modal-content">
                         <h5 className="modal-header text-dark">
                             Technical Analysis Selection

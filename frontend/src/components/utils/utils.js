@@ -1,22 +1,4 @@
-// export async function retrieveDBData({ symbol }) {
-//     const response = await fetch(`http://127.0.0.1:8000/api/tickerhistoricinfo/?ticker=${symbol}/`, {
-//         method: 'GET',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/json'
-//         }
-//     })
-
-//     let data = await response.json()
-
-//     if (response.status === 200) {
-//         return data
-//     } else {
-//         throw new Error(response.statusText)
-//     }
-// }
-
-
+// Fetch 20-year daily historic prices of stock
 export async function retrieveAPIData(symbol) {
     const response = await fetch('sample.json', {
     // const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=full&apikey=${process.env.REACT_APP_ALPHAVANTAGE_APIKEY}`, {
@@ -45,42 +27,56 @@ export async function retrieveAPIData(symbol) {
     return data.reverse()
 }
 
-
-export async function retrieveTicker(symbol, authTokens) {
-    try {
-        const response = await fetch(`http://127.0.0.1:8000/api/tickers/?symbol=${symbol}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + String(authTokens.access)
-            }
-        })
-
-        let data = await response.json()
-
-        return data[0]
-    } catch (e) {
-        console.log(e)
-        const response = await fetch('http://127.0.0.1:8000/api/tickers/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + String(authTokens.access)
-            },
-            body: JSON.stringify({'symbol': symbol})
-        })
-
-        let data = await response.json()
-
-        if (response.status === 200) {
-            return data
-        } else {
-            console.log(response.statusText)
+// Fetch ticker data if symbol exists within DB, otherwise create a new ticker object
+export async function retrieveTicker(symbol) {
+    const getResponse = await fetch(`http://127.0.0.1:8000/api/tickers/?symbol=${symbol}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
         }
+    })
+
+    if (getResponse.status === 200) {
+        let data = await getResponse.json()
+        return data
+    }
+
+    const postResponse = await fetch('http://127.0.0.1:8000/api/tickers/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({'symbol': symbol})
+    })
+
+    if (postResponse.status === 201) {
+        let data = await postResponse.json()
+        return data
+    } else {
+        console.log(postResponse.statusText)
     }
 }
+
+
+// export async function retrieveDBData({ symbol }) {
+//     const response = await fetch(`http://127.0.0.1:8000/api/tickerhistoricinfo/?ticker=${symbol}/`, {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Accept': 'application/json'
+//         }
+//     })
+
+//     let data = await response.json()
+
+//     if (response.status === 200) {
+//         return data
+//     } else {
+//         throw new Error(response.statusText)
+//     }
+// }
 
 
 // export async function updateDBData(data) {

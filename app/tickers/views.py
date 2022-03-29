@@ -1,5 +1,4 @@
 from rest_framework import mixins, viewsets
-from rest_framework.permissions import IsAuthenticated
 
 from core.models import Ticker, TickerHistoricInfo
 from .serializers import TickerSerializer, TickerHistoricInfoSerializer
