@@ -18,6 +18,7 @@ $light: #6c757d;
 
 @import "../../../node_modules/bootstrap/scss/bootstrap.scss";
 
+
 .watchlist {
     width: 275px
 }
@@ -72,6 +73,7 @@ $light: #6c757d;
 }
 
 .widgetItem {
+    display: flex;
     text-align: center;
     padding: .5rem 1rem;
     border-bottom: 1px $light solid;

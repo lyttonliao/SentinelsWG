@@ -12011,6 +12011,9 @@ fieldset:disabled .btn {
 }
 
 .widgetItem {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
   text-align: center;
   padding: .5rem 1rem;
   border-bottom: 1px #6c757d solid;

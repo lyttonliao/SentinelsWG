@@ -91,6 +91,10 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
         })
 
         volumeSeries.setData(volumeData);
+
+        // chart.current.timeScale().applyOptions({
+        //     visible: false
+        // })
     }, [])
 
 

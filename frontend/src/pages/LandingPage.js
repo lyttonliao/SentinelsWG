@@ -6,8 +6,12 @@ import Search from '../components/Search';
 const LandingPage = () => {
     return (
         <div className="d-flex position-relative h-100">
-            <Watchlist />
-            <Chart />
+            <div className="d-block">
+                <Watchlist />
+            </div>
+            <div className="h-100 w-100">
+                <Chart />
+            </div>
             <Search />
         </div>
     );
