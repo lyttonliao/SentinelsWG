@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext, useRef } from "react"
 import CandleStickChart from "./charts/CandleStick"
+import RSI from "./charts/RSI"
 import { retrieveAPIData, retrieveTicker } from "./utils/utils"
 import AppContext from "../context/AppContext"
 import AuthContext from "../context/AuthContext"
@@ -11,14 +12,31 @@ function Chart() {
     const [ chartData, setChartData ] = useState([])
     const [ externalSelections, setExternalSelections ] = useState([])
     const [ internalSelections, setInternalSelections ] = useState([])
+    const [ sync, setSync ] = useState(false)
     const { activeStock, watchlistitems, setWatchlistItems } = useContext(AppContext)
     const { user, authTokens } = useContext(AuthContext)
+
+    const primaryRef = useRef()
+    const rsiRef = useRef()
+    const obvRef = useRef()
+    const adiRef = useRef()
+    const macdRef = useRef()
+    const soRef = useRef()
+    const refs = {
+        'CandleStickChart': primaryRef,
+        'Relative Strength Index': rsiRef,
+        'On-Balance Volume': obvRef,
+        'Accumulation/Distribution Indicator': adiRef,
+        'Moving Average Convergence Divergence': macdRef,
+        'Stochastic Oscillator': soRef
+    }
 
 
     function addSelector(selections, selector) {
         const [setFunction, selectionState] = selections === 'externalSelections' ? [setExternalSelections, externalSelections] : [setInternalSelections, internalSelections]
         if (selectionState.findIndex(x => x === selector) === -1) {
             setFunction([...selectionState, selector])
+            setSync(true)
         }
     }
 
@@ -26,12 +44,14 @@ function Chart() {
     function removeSelector(selections, selector) {
         const [setFunction, selectionState] = selections === 'externalSelections' ? [setExternalSelections, externalSelections] : [setInternalSelections, internalSelections]
         const idx = selectionState.findIndex(x => x === selector)
+        debugger
         if (-1 < idx) {
             setFunction([...selectionState.slice(0,idx), ...selectionState.slice(idx+1)])
         }
     }
 
 
+    // Creating html elements for technical selectors' modal
     function indicatorsToList() {
         let internal = [
             'Simple Moving Average', 
@@ -74,6 +94,7 @@ function Chart() {
     }
 
 
+    // Toggles following status on stock
     async function toggleWatch() {
         if (isDisplayWatched()) {
             const idx = watchlistitems.findIndex(watchlistitem => watchlistitem.symbol === display)
@@ -114,6 +135,7 @@ function Chart() {
     }
 
 
+    // Fetches stock data from public API, retrieves the ticker info from DB
     useEffect(() => {
         if (chartData.length === 0 || activeStock !== display) {
             retrieveAPIData(activeStock).then(data => setChartData(data))
@@ -129,14 +151,67 @@ function Chart() {
     }, [activeStock])
 
 
+    // Handler to sync time range for multiple panes
+    function myVisibleTimeRangeChangeHandler(newVisibleTimeRange) {
+        if (newVisibleTimeRange === null) {
+            return
+        }
+
+        const allSelections = ['CandleStickChart', ...externalSelections]
+        let from
+        let to
+        if (sync) {
+            const timeRange = primaryRef.current.timeScale().getVisibleRange()
+            from = timeRange.from
+            to = timeRange.to
+        } else {
+            from = newVisibleTimeRange.from
+            to = newVisibleTimeRange.to
+        }
+
+        for (let selection of allSelections) {
+            const chart = refs[selection]
+            chart.current.timeScale().setVisibleRange({
+                from: from,
+                to: to
+            })
+        }
+        setSync(false)
+    }
+
+
+    useEffect(() => {
+        if (primaryRef.current) {
+            primaryRef.current.timeScale().subscribeVisibleTimeRangeChange(myVisibleTimeRangeChangeHandler)
+
+            externalSelections.forEach(selection => {
+                refs[selection].current.timeScale().subscribeVisibleTimeRangeChange(myVisibleTimeRangeChangeHandler)
+            })
+        }
+    }, [sync])
+
+
+    function auxiliaryCharts() {
+        const result = externalSelections.map((selection, i) => {
+            if (selection === 'Relative Strength Index') {
+                return <RSI key={i} chart={rsiRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1}/>
+            }
+        })
+        return result
+    }
+
+
     if (chartData.length === 0) {
         return (
-            <div className="d-flex h-50 flex-grow-1 border border-light"></div>
+            <div className="d-flex w-100 h-100 border border-light"></div>
         )
     }
     return (
-        <div className="d-flex h-50 flex-grow-1 border border-light">
-            <CandleStickChart symbol={display} data={chartData} techIndicators={internalSelections} removeSelector={removeSelector}/>
+        <div className="d-flex w-100 border border-light">
+            <div className="w-100 border border-left border-light">
+                <CandleStickChart chart={primaryRef} symbol={display} data={chartData} techIndicators={internalSelections} removeSelector={removeSelector} last={externalSelections.length === 0}/>
+                {auxiliaryCharts()}
+            </div>
             <div className="widgets">
                 <div className="widgetItem" onClick={() => toggleWatch()}>
                     {isDisplayWatched() ? 

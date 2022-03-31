@@ -9,9 +9,7 @@ const LandingPage = () => {
             <div className="d-block">
                 <Watchlist />
             </div>
-            <div className="h-100 w-100">
-                <Chart />
-            </div>
+            <Chart />
             <Search />
         </div>
     );

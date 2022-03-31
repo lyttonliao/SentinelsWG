@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { createChart, CrosshairMode } from 'lightweight-charts'
+import React, { useEffect, useRef, useState } from 'react';
+import { createChart, CrosshairMode } from 'lightweight-charts';
 
 
-const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
+const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector, last }) => {
     const chartContainerRef = useRef()
-    const chart = useRef()
     const resizeObserver = useRef()
 
     const months = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun", 7: "Jul", 8: "Aug", 9: "Sept", 10: "Oct", 11: "Nov", 12: "Dec"}
@@ -91,10 +90,6 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
         })
 
         volumeSeries.setData(volumeData);
-
-        // chart.current.timeScale().applyOptions({
-        //     visible: false
-        // })
     }, [])
 
 
@@ -139,6 +134,7 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
             lastValueVisible: false,
             priceLineVisible: false,
         }) 
+
         let rollingSum = data.slice(0, n-1).reduce((a, b) => a + b.close, 0)
         let SMAData = data.slice(n-1).map((d, i) => {
             rollingSum = (i === 0) ? rollingSum + d.close : rollingSum + d.close - data[i-1].close
@@ -147,6 +143,7 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
                 "value": rollingSum / n,
             })
         })
+        
         lineSeries.setData(SMAData)
         setSeries({...series, 'Simple Moving Average': lineSeries})
     }
@@ -158,6 +155,7 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
             lastValueVisible: false,
             priceLineVisible: false,
         })
+
         let priorEMA = data.slice(0,n).reduce((a, b) => a + b.close, 0) / n
         const multiplier = smoothing / (n + 1)
         let EMAData = data.slice(n).map(d => {
@@ -168,6 +166,7 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
                 "value": currEMA
             })
         })
+
         lineSeries.setData(EMAData)
         setSeries({...series, 'Exponential Moving Average': lineSeries})
     }
@@ -177,6 +176,7 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
         let startData = data.slice(0, n - 1)
         let recentSum = startData.reduce((a, b) => a + b.close, 0)
         let recentSumOfSquares = startData.reduce((a, b) => a + (b.close - recentSum / n)**2, 0)
+
         let upper = []
         let average = []
         let lower = []
@@ -185,23 +185,25 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
             const avgSum = recentSum / n
             recentSumOfSquares = (i === 0) ? recentSumOfSquares + (d.close - avgSum)**2 : recentSumOfSquares + (d.close - avgSum)**2 - (data[i-1].close - avgSum)**2
             const twoSD = Math.sqrt(recentSumOfSquares / n) * 2
-            debugger
             lower.push({"time": d.date, "value": (avgSum - twoSD)})
             average.push({"time": d.date, "value": avgSum})
             upper.push({"time": d.date, "value": (avgSum + twoSD)})
         })
+
         const lowerSeries = chart.current.addLineSeries({
             lineWidth: 1,
             lastValueVisible: false,
             priceLineVisible: false,
 
         })
+
         const averageSeries = chart.current.addLineSeries({
             lineWidth: 1,
             lastValueVisible: false,
             priceLineVisible: false,
             color: "orange"
         })
+
         const upperSeries = chart.current.addLineSeries({
             lineWidth: 1,
             lastValueVisible: false,
@@ -218,6 +220,7 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
     useEffect(() => {
         for (let i = 0; i < techIndicators.length; i++) {
             const curr = techIndicators[i]
+
             if (!(curr in series)) {
                 if (curr === "Simple Moving Average") {
                     simpleMovingAverage()
@@ -233,6 +236,21 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
     }, [techIndicators])
 
 
+    useEffect(() => {
+        if (!last) {
+            chart.current.timeScale().applyOptions({
+                visible: false
+            })
+        } else {
+            chart.current.timeScale().applyOptions({
+                visible: true
+            })
+        }
+    }, [last])
+
+
+    // Series are stored within state, {key: seriesName, value: series}
+    // Removes series from chart, and removes selector from list of internal selections
     function removeIndicator(indicator) {
         const lineSeries = series[indicator]
         chart.current.removeSeries(lineSeries)
@@ -260,16 +278,16 @@ const CandleStickChart = ({ symbol, data, techIndicators, removeSelector }) => {
 
 
     return (
-        <div ref={chartContainerRef} className="chart-container position-relative flex-grow-1 w-100 h-100">
+        <div ref={chartContainerRef} chart={chart} id="primaryChart" className="chart-container position-relative w-100 h-50">
             {legend && 
                 <div className="chart-legend position-absolute top-0 start-0">
                     <div className="d-flex-inline">
                         <small className="ms-2 me-1 fs-6">{symbol}</small>
                         <small className="mx-1">{legend.time}</small>
-                        <small className="mx-1"><strong>O</strong> {legend.open}</small>
-                        <small className="mx-1"><strong>C</strong> {legend.close}</small>
-                        <small className="mx-1"><strong>H</strong> {legend.high}</small>
-                        <small className="mx-1"><strong>L</strong> {legend.low}</small>
+                        <small className="mx-1"><strong>O</strong> {legend.open.toFixed(2)}</small>
+                        <small className="mx-1"><strong>C</strong> {legend.close.toFixed(2)}</small>
+                        <small className="mx-1"><strong>H</strong> {legend.high.toFixed(2)}</small>
+                        <small className="mx-1"><strong>L</strong> {legend.low.toFixed(2)}</small>
                     </div>
                     <div>
                         <small className="mx-2"><strong>Vol</strong> {legend.volume}</small>
