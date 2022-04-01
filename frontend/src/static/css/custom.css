@@ -12055,9 +12055,7 @@ fieldset:disabled .btn {
 }
 
 .indicatorClose {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+  display: none;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -12066,6 +12064,12 @@ fieldset:disabled .btn {
           justify-content: center;
   padding: 0 .25rem;
   margin-left: .25rem;
+}
+
+.indicator:hover .indicatorClose {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 .indicatorClose:hover {

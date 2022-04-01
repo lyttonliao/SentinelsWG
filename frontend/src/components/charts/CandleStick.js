@@ -21,6 +21,8 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
     const [ legend, setLegend ] = useState(defaultLegend)
     const [ series, setSeries ] = useState({})
 
+
+    // Initializing Chart
     useEffect(() => {
         chart.current = createChart(chartContainerRef.current, {
             width: chartContainerRef.current.clientWidth,
@@ -47,6 +49,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
                 borderColor: '#485c7b',
             },
         })
+        debugger
 
         const priceData = data.map(d => {
             return ({

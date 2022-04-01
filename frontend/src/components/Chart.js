@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react"
 import CandleStickChart from "./charts/CandleStick"
 import RSI from "./charts/RSI"
+import OnBalanceVolume from "./charts/OnBalanceVolume"
 import { retrieveAPIData, retrieveTicker } from "./utils/utils"
 import AppContext from "../context/AppContext"
 import AuthContext from "../context/AuthContext"
@@ -194,7 +195,11 @@ function Chart() {
     function auxiliaryCharts() {
         const result = externalSelections.map((selection, i) => {
             if (selection === 'Relative Strength Index') {
-                return <RSI key={i} chart={rsiRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1}/>
+                return <RSI key={i} chart={rsiRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1} />
+            }
+            
+            if (selection === 'On-Balance Volume') {
+                return <OnBalanceVolume key={i} chart={obvRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1} />
             }
         })
         return result
