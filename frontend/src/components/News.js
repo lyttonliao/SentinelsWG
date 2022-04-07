@@ -55,9 +55,11 @@ function News() {
 
 
     return (
-        <div className="newsContainer py-4 px-4 h-50 overflow-auto border border-light border-2">
-            <h3 className="mb-4">News</h3>
-            {articlesList()}
+        <div className="newsContainer">
+            <h5 className="newsTitle">{activeStock} News</h5>
+            <div className="newsBody">
+                {articlesList()}
+            </div>
         </div>
     )
 }

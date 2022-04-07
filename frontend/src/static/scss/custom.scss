@@ -39,6 +39,24 @@ a:visited {
 
 .newsContainer {
     width: 275px !important;
+    overflow: auto;
+    border: $light 2px solid;
+    height: 50%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.newsTitle {
+    background-color: rgb(6, 13, 19);
+    position: fixed;
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+    width: calc(275px - 3rem - 4px);
+}
+
+.newsBody {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
 }
 
 .trigger:hover {
