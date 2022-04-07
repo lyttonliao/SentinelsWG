@@ -2,7 +2,6 @@ import React from 'react';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage'
-import Header from './components/Header'
 import { 
     BrowserRouter as Router,
     Routes,
@@ -10,7 +9,6 @@ import {
 } from "react-router-dom";
 import { AuthProvider } from './context/AuthContext';
 import { AppContextProvider } from './context/AppContext';
-// import PrivateRoute from './utils/PrivateRoute';
 import AuthRoute from './utils/AuthRoute';
 import './static/css/index.css';
 import './static/css/custom.min.css';
@@ -22,7 +20,6 @@ class App extends React.Component {
             <Router>
                 <AuthProvider>
                     <AppContextProvider>
-                        <Header />
                         <Routes>
                             <Route path="/" element={<LandingPage />} />
                             <Route 

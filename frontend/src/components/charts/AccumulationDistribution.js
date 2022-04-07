@@ -1,34 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
-import { createChart, CrosshairMode } from "lightweight-charts";
+import React, { useState, useRef, useEffect } from 'react';
+import { createChart, CrosshairMode } from 'lightweight-charts';
 
 
-// When volume sharply increases without significant price change, price will swing
-const OnBalanceVolume = ({ chart, data, removeSelector, last, extLen }) => {
+const AccumulationDistribution = ({ chart, data, removeSelector, last, extLen }) => {
     const chartContainerRef = useRef()
     const resizeObserver = useRef()
     const [ legend, setLegend ] = useState({})
     const months = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun", 7: "Jul", 8: "Aug", 9: "Sept", 10: "Oct", 11: "Nov", 12: "Dec"}
 
 
-    function calcOBV() {
-        let obv = 0
-        let obvData = []
-        for (let i = 1; i < data.length; i++) {
-            const today = data[i]
-            const yesterday = data[i-1]
-            if (today.close > yesterday.close) {
-                obv = obv + today.volume
-            } else if (today.close < yesterday.close) {
-                obv = obv - today.volume
-            }
-
-            obvData.push({
-                "time": today.date,
-                "value": obv
+    function calcADI() {
+        let prevAD = 0
+        let ADData = data.map(d => {
+            const moneyFlowMultiplier = ((d.close - d.low) - (d.high - d.close)) / (d.high - d.low)
+            const moneyFlowVolume = moneyFlowMultiplier * d.volume
+            const currAD = prevAD + moneyFlowVolume
+            prevAD = currAD
+            return ({
+                "time": d.date,
+                "value": currAD
             })
-        }
-
-        return obvData
+        })
+        return ADData
     }
 
 
@@ -61,30 +54,30 @@ const OnBalanceVolume = ({ chart, data, removeSelector, last, extLen }) => {
             localization: {
                 priceFormatter: function(price) {
                     if (price < 10**9) {
-                        return Math.round(price / 10**6) + 'M'
+                        return (price / 10**6).toFixed(1) + 'M'
                     } 
-                    return Math.round(price / 10**9) + 'B'
+                    return (price / 10**9).toFixed(1) + 'B'
                 }
             }
         })
 
-        const OBVData = calcOBV()
-        const OBVSeries = chart.current.addLineSeries({
+        const ADIData = calcADI()
+        const ADISeries = chart.current.addLineSeries({
             lineWidth: 1,
             priceLineVisible: false,
             lastValueVisible: false,
         })
-        OBVSeries.setData(OBVData)
+        ADISeries.setData(ADIData)
     }, [])
 
 
     // Resize chart on container resizes
     useEffect(() => {
         resizeObserver.current = new ResizeObserver(entries => {
-            if (entries.length === 0 || entries[0].target !== chartContainerRef.current) { return; }
+            if (entries.length === 0 || entries[0].target != chartContainerRef.current) { return; }
 
-            const { width, height } = entries[0].contentRect;
-            chart.current.applyOptions({ width: width, height: height })
+            const { width, height } = entries[0].contentRect
+            chart.current.applyOptions({ width: width, height: height})
         })
 
         resizeObserver.current.observe(chartContainerRef.current)
@@ -92,7 +85,7 @@ const OnBalanceVolume = ({ chart, data, removeSelector, last, extLen }) => {
         return () => resizeObserver.current.disconnect()
     }, [])
 
-    
+
     // Tracks data at cursor position
     useEffect(() => {
         chart.current.subscribeCrosshairMove(function(param) {
@@ -129,10 +122,10 @@ const OnBalanceVolume = ({ chart, data, removeSelector, last, extLen }) => {
                 <div className="chart-legend position-absolute top-0 start-0">
                     <div className="d-flex-inline">
                         <div className="indicator">
-                            <small className="me-1">OBV</small>
+                            <small className="me-1">Accum/Dist</small>
                             <small className="mx-1">{legend.time}</small>
-                            <small className="mx-1" style={{"color": "#2196f3"}}>{legend.value}</small>
-                            <div className="indicatorClose" onClick={() => removeSelector("externalSelections", "On-Balance Volume")}>
+                            <small className="mx-1">{legend.value}</small>
+                            <div className="indicatorClose" onClick={() => removeSelector("externalSelections", "Accumulation/Distribution")}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x" viewBox="0 0 16 16">
                                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                                 </svg>
@@ -142,7 +135,7 @@ const OnBalanceVolume = ({ chart, data, removeSelector, last, extLen }) => {
                 </div>
             }
         </div>
-    )
+    )    
 }
 
-export default OnBalanceVolume
+export default AccumulationDistribution

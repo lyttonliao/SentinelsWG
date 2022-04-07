@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createChart, CrosshairMode } from 'lightweight-charts';
 
 
-const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector, last }) => {
+const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector, last, extLen }) => {
     const chartContainerRef = useRef()
     const resizeObserver = useRef()
 
@@ -49,7 +49,6 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
                 borderColor: '#485c7b',
             },
         })
-        debugger
 
         const priceData = data.map(d => {
             return ({
@@ -256,7 +255,11 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
     // Removes series from chart, and removes selector from list of internal selections
     function removeIndicator(indicator) {
         const lineSeries = series[indicator]
-        chart.current.removeSeries(lineSeries)
+        if (indicator === 'Bollinger Bands') {
+            lineSeries.forEach(series => chart.current.removeSeries(series))
+        } else {
+            chart.current.removeSeries(lineSeries)
+        }
         const remainingSeries = {...series}
         delete remainingSeries[indicator]
         setSeries({...remainingSeries})
@@ -281,7 +284,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
 
 
     return (
-        <div ref={chartContainerRef} chart={chart} id="primaryChart" className="chart-container position-relative w-100 h-50">
+        <div ref={chartContainerRef} style={{"height": `${2 / (2 + extLen) * 100}%`}} id="primaryChart" className="chart-container position-relative w-100">
             {legend && 
                 <div className="chart-legend position-absolute top-0 start-0">
                     <div className="d-flex-inline">

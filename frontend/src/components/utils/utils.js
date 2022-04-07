@@ -39,7 +39,7 @@ export async function retrieveTicker(symbol) {
 
     if (getResponse.status === 200) {
         let data = await getResponse.json()
-        return data
+        if (data.length > 0) { return data }
     }
 
     const postResponse = await fetch('http://127.0.0.1:8000/api/tickers/', {
@@ -53,7 +53,7 @@ export async function retrieveTicker(symbol) {
 
     if (postResponse.status === 201) {
         let data = await postResponse.json()
-        return data
+        if (data.length > 0) { return data }
     } else {
         console.log(postResponse.statusText)
     }

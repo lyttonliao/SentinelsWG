@@ -5,6 +5,9 @@ import OnBalanceVolume from "./charts/OnBalanceVolume"
 import { retrieveAPIData, retrieveTicker } from "./utils/utils"
 import AppContext from "../context/AppContext"
 import AuthContext from "../context/AuthContext"
+import AccumulationDistribution from "./charts/AccumulationDistribution"
+import MovingAverageConvDiv from "./charts/MovingAverageConvDiv"
+import StochasticOscillator from "./charts/StochasticOscillator"
 
 
 function Chart() {
@@ -20,14 +23,14 @@ function Chart() {
     const primaryRef = useRef()
     const rsiRef = useRef()
     const obvRef = useRef()
-    const adiRef = useRef()
+    const adRef = useRef()
     const macdRef = useRef()
     const soRef = useRef()
     const refs = {
         'CandleStickChart': primaryRef,
         'Relative Strength Index': rsiRef,
         'On-Balance Volume': obvRef,
-        'Accumulation/Distribution Indicator': adiRef,
+        'Accumulation/Distribution': adRef,
         'Moving Average Convergence Divergence': macdRef,
         'Stochastic Oscillator': soRef
     }
@@ -35,6 +38,7 @@ function Chart() {
 
     function addSelector(selections, selector) {
         const [setFunction, selectionState] = selections === 'externalSelections' ? [setExternalSelections, externalSelections] : [setInternalSelections, internalSelections]
+        // if (selections === 'externalSelections' & externalSelections.length > 3) { return }
         if (selectionState.findIndex(x => x === selector) === -1) {
             setFunction([...selectionState, selector])
             setSync(true)
@@ -45,7 +49,6 @@ function Chart() {
     function removeSelector(selections, selector) {
         const [setFunction, selectionState] = selections === 'externalSelections' ? [setExternalSelections, externalSelections] : [setInternalSelections, internalSelections]
         const idx = selectionState.findIndex(x => x === selector)
-        debugger
         if (-1 < idx) {
             setFunction([...selectionState.slice(0,idx), ...selectionState.slice(idx+1)])
         }
@@ -62,7 +65,7 @@ function Chart() {
 
         let external = [
             'On-Balance Volume', 
-            'Accumulation/Distribution Indicator', 
+            'Accumulation/Distribution', 
             'Relative Strength Index', 
             'Moving Average Convergence Divergence', 
             'Stochastic Oscillator'
@@ -122,7 +125,7 @@ function Chart() {
                     'Accept': 'application/json',
                     'Authorization': 'Bearer ' + String(authTokens.access)
                 },
-                body: JSON.stringify({'user': user.id, 'ticker': ticker.id})
+                body: JSON.stringify({'user': user.user_id, 'ticker': ticker.id})
             })
 
             let data = await response.json()
@@ -140,7 +143,9 @@ function Chart() {
     useEffect(() => {
         if (chartData.length === 0 || activeStock !== display) {
             retrieveAPIData(activeStock).then(data => setChartData(data))
-            retrieveTicker(activeStock).then(ticker => setTicker(ticker[0]))
+            retrieveTicker(activeStock).then(ticker => {
+                setTicker(ticker[0])
+            })
             setDisplay(activeStock)
         }
 
@@ -181,6 +186,7 @@ function Chart() {
     }
 
 
+    // Syncs time scale of all active charts
     useEffect(() => {
         if (primaryRef.current) {
             primaryRef.current.timeScale().subscribeVisibleTimeRangeChange(myVisibleTimeRangeChangeHandler)
@@ -193,13 +199,26 @@ function Chart() {
 
 
     function auxiliaryCharts() {
+        const len = externalSelections.length
         const result = externalSelections.map((selection, i) => {
             if (selection === 'Relative Strength Index') {
-                return <RSI key={i} chart={rsiRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1} />
+                return <RSI key={i} chart={rsiRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1} extLen={len} />
             }
             
             if (selection === 'On-Balance Volume') {
-                return <OnBalanceVolume key={i} chart={obvRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1} />
+                return <OnBalanceVolume key={i} chart={obvRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1} extLen={len} />
+            }
+
+            if (selection === 'Accumulation/Distribution') {
+                return <AccumulationDistribution key={i} chart={adRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1} extLen={len} />
+            }
+
+            if (selection === 'Moving Average Convergence Divergence') {
+                return <MovingAverageConvDiv key={i} chart={macdRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1} extLen={len} />
+            }
+
+            if (selection === 'Stochastic Oscillator') {
+                return <StochasticOscillator key={i} chart={soRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1} extLen={len} />
             }
         })
         return result
@@ -208,34 +227,42 @@ function Chart() {
 
     if (chartData.length === 0) {
         return (
-            <div className="d-flex w-100 h-100 border border-light"></div>
+            <div className="d-flex w-100 h-100 border border-light border-2"></div>
         )
     }
     return (
-        <div className="d-flex w-100 border border-light">
-            <div className="w-100 border border-left border-light">
-                <CandleStickChart chart={primaryRef} symbol={display} data={chartData} techIndicators={internalSelections} removeSelector={removeSelector} last={externalSelections.length === 0}/>
-                {auxiliaryCharts()}
-            </div>
-            <div className="widgets">
+        <div className="w-100 border border-light border-2">
+            <div className="widgets border-bottom border-light border-2">
                 <div className="widgetItem" onClick={() => toggleWatch()}>
                     {isDisplayWatched() ? 
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill='yellow' className="bi bi-star-fill" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill='yellow' className="bi bi-star-fill" viewBox="0 0 16 16">
                             <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
                         </svg>
                         :
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-star" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-star" viewBox="0 0 16 16">
                             <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
                         </svg>
                     }
                 </div>
-                <div data-toggle="tooltip" data-placement="left" title="Indicators, Oscillators, Strategies">
-                    <div className="widgetItem" data-toggle="modal" data-target="#widgetModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" className="bi bi-graph-up-arrow" viewBox="0 0 16 16">
+                <div className="widgetItem" data-toggle="modal" data-target="#widgetModal">
+                    <div data-toggle="tooltip" data-placement="left" title="Indicators, Oscillators, Strategies">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="white" className="bi bi-graph-up-arrow" viewBox="0 0 16 16">
                             <path fillRule="evenodd" d="M0 0h1v15h15v1H0V0Zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5Z"/>
                         </svg>
                     </div>
                 </div>
+            </div>
+            <div className="chartContainer w-100">
+                <CandleStickChart 
+                    chart={primaryRef} 
+                    symbol={display} 
+                    data={chartData} 
+                    techIndicators={internalSelections} 
+                    removeSelector={removeSelector} 
+                    last={externalSelections.length === 0} 
+                    extLen={externalSelections.length} 
+                />
+                {auxiliaryCharts()}
             </div>
             <div className="modal fade" id="widgetModal" tabIndex="-1" role="dialog" aria-labelledby="widgetLabel" aria-hidden="true">
                 <div className="modal-dialog position-absolute top-50 start-50 translate-middle">

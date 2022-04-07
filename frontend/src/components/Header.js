@@ -6,25 +6,25 @@ function Header() {
     let { user, logoutUser } = useContext(AuthContext);
     
     return (
-        <nav className="navbar lg:w-">
-            <a className="navbar-brand mx-5" href="/">
-                <img src="/images/sent.png" width="75" height="75" className="d-inline-block align-top" alt=""/>
+        <nav className="navbar d-flex border border-light border-2">
+            <a className="navbar-brand d-flex justify-content-center w-50 me-0 border-end border-light border-2" href="/">
+                <img src="/images/sent.png" width="85" height="85" className="d-inline-block align-top" alt="" />
             </a>
-            <div>
-                {user ? (
-                    <div className="d-flex">
-                        <p className="m-auto">{user.name}</p>
-                        <a href="/" className="h-100 ms-3 me-5" onClick={logoutUser}>
-                            <button className="btn btn-primary">Log Out</button>
-                        </a>
-                    </div>
-                ) : (
-                    <div className="d-flex">
-                        <a className="ms-5 me-2 h-100" href="/login"><button className="btn btn-primary">Sign In</button></a>
-                        <a className="ms-2 me-5 h-100" href="/register"><button className="btn btn-primary">Sign Up</button></a>
-                    </div>
-                )}
-            </div>
+            {user ? (
+                <div className="w-50 h-100">
+                    <div className="nav-button border-bottom border-light border-2">{user.name}</div>
+                    <div className="nav-button trigger" onClick={logoutUser}>Log Out</div>
+                </div>
+            ) : (
+                <div className="d-block w-50 h-100">
+                    <a className="text-decoration-none " href="/login">
+                        <div className="nav-button trigger border-bottom border-light border-2">Sign In</div>
+                    </a>
+                    <a className="text-decoration-none " href="/register">
+                        <div className="nav-button trigger">Sign Up</div>
+                    </a>
+                </div>
+            )}
         </nav>
     )
 };

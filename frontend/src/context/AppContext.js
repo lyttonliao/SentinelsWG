@@ -20,11 +20,6 @@ export const AppContextProvider = ({children}) => {
 
 
     async function getWatchlist() {
-        // if (!user) {
-        //     setWatchlistItems([])
-        //     return
-        // }
-
         const response = await fetch(`http://127.0.0.1:8000/api/users/${user.user_id}/`, {
             method: 'GET',
             headers: {
@@ -52,16 +47,12 @@ export const AppContextProvider = ({children}) => {
 
     
     useEffect(() => {
-        if (!user) return
-        
         if (watchlistitems.length === 0 || prevWatchlistitemsRef.current !== watchlistitems.length) {
             getWatchlist()
             prevWatchlistitemsRef.current = watchlistitems.length
         }
 
-        return () => {
-            if (!user) setWatchlistItems([])
-        }
+        if (!user) {setWatchlistItems([])}
         //eslint-disable-next-line
     }, [user])
 

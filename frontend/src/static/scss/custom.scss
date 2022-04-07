@@ -1,5 +1,3 @@
-// $primary: rgb(21, 44, 55);
-// $secondary: rgb(2, 24, 38);
 $light: #6c757d;
 
 
@@ -9,18 +7,38 @@ $light: #6c757d;
 @import "../../../node_modules/bootstrap/scss/utilities";
 
 
-// $custom-theme-colors: (
-//     "primary": rgb(21, 44, 55),
-//     "secondary": rgb(2, 24, 38),
-// );
-
-// $theme-colors: map-merge($custom-theme-colors, $theme-colors);
-
 @import "../../../node_modules/bootstrap/scss/bootstrap.scss";
 
 
-.watchlist {
-    width: 275px
+a:visited {
+    color: inherit;
+}
+
+.navbar {
+    height: 100px !important;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.nav-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+    padding: .25rem 0;
+}
+
+.infoBlock {
+    width: 275px !important;
+    height: calc(100% - 100px);
+}
+
+.watchlistContainer {
+    width: 275px !important;
+}
+
+.newsContainer {
+    width: 275px !important;
 }
 
 .trigger:hover {
@@ -32,6 +50,10 @@ $light: #6c757d;
 .activeStock {
     border: $primary 2px solid !important;
     background-color: rgba($gray-200, 0.25);
+}
+
+.chartContainer {
+    height: calc(100% - 48px)
 }
 
 .chart-legend {
@@ -72,13 +94,24 @@ $light: #6c757d;
     background-color: rgba($gray-600, 0.25)
 }
 
+.widgets {
+    height: 48px;
+    display: flex;
+}
+
 .widgetItem {
     display: flex;
-    text-align: center;
-    padding: .5rem 1rem;
-    border-bottom: 1px $light solid;
+    justify-content: center;
+    align-items: center;
     font-weight: bold;
+    padding-left: 12.5px;
+    padding-right: 12.5px;
+    border-right: $light 2px solid;
 }
+
+// .widgetItem:not(:last-child) {
+//     border-right: $light 2px solid;
+// }
 
 .widgetItem:hover {
     background-color: rgba($gray-200, 0.25);
@@ -125,4 +158,12 @@ $light: #6c757d;
 .indicatorClose:hover {
     background-color: $light;
     border-radius: .25rem !important;
+}
+
+.positive {
+    color: rgba(38, 166, 154, 0.28);
+}
+
+.negative {
+    color: rgba(239, 83, 80, 0.28);
 }

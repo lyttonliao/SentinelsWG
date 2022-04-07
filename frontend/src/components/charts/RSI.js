@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createChart, CrosshairMode } from 'lightweight-charts';
 
 
-const RSI = ({ chart, data, removeSelector, last }) => {
+const RSI = ({ chart, data, removeSelector, last, extLen }) => {
     const chartContainerRef = useRef()
     const resizeObserver = useRef()
     const [ legend, setLegend ] = useState({})
@@ -143,7 +143,7 @@ const RSI = ({ chart, data, removeSelector, last }) => {
     }, [])
 
 
-    // Resize chart on container resizes.
+    // Resize chart on container resizes
     useEffect(() => {
         resizeObserver.current = new ResizeObserver(entries => {
             if (entries.length === 0 || entries[0].target !== chartContainerRef.current) { return; }
@@ -167,8 +167,11 @@ const RSI = ({ chart, data, removeSelector, last }) => {
                 chart.current.isCrosshairVisible = true
                 const iterator = param.seriesPrices.values()
                 const date = months[param.time['month']] + ` ${param.time['day']}, ${param.time['year']}`
-                debugger
-                setLegend({"time": date, "value": iterator.next().value.toFixed(2)})
+                setLegend({
+                    "time": date, 
+                    "rsi": iterator.next().value.toFixed(2),
+                    "sma": iterator.next().value.toFixed(2)
+                })
             }
         })
     }, [])
@@ -188,14 +191,15 @@ const RSI = ({ chart, data, removeSelector, last }) => {
 
 
     return (
-            <div ref={chartContainerRef} className="chart-container auxiliaryChart position-relative w-100 h-25">
+            <div ref={chartContainerRef} style={{"height": `${1 / (2 + extLen) * 100}%`}} className="chart-container auxiliaryChart position-relative w-100">
                 {legend &&
                     <div className="chart-legend position-absolute top-0 start-0">
                         <div className="d-flex-inline">
                             <div className="indicator">
                                 <small className="me-1">RSI</small>
                                 <small className="mx-1">{legend.time}</small>
-                                <small className="mx-1">{legend.value}</small>
+                                <small className="mx-1" style={{"color": "#2196f3"}}>{legend.rsi}</small>
+                                <small className="mx-1" style={{"color": "yellow"}}>{legend.sma}</small>
                                 <div className="indicatorClose" onClick={() => removeSelector("externalSelections", "Relative Strength Index")}>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x" viewBox="0 0 16 16">
                                         <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>

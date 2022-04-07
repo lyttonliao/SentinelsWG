@@ -15,6 +15,6 @@ html, body {
 }
 
 #root {
-    height: calc(100% - 101px);
+    height: 100%;
     position: relative;
 }

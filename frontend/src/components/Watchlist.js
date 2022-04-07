@@ -6,7 +6,7 @@ import AppContext from "../context/AppContext";
 function Watchlist() {
     const [ currentTickerInfo, setCurrentTickerInfo ] = useState([])
     const [ loading, setLoading ] = useState(true)
-    const { user, authTokens, logoutUser } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
     const { activeStock, setStorageSymbol, watchlistitems } = useContext(AppContext)
 
 
@@ -31,34 +31,7 @@ function Watchlist() {
 
         setCurrentTickerInfo(tickerList)
         setLoading(false)
-        // Promise.all(tickerList.map(async ticker => {
-        //     return (
-        //         fetch(`http://127.0.0.1:8000/api/tickerhistoricinfo/?ticker=${ticker}&latest=True/`, {
-        //             method: 'GET',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'Authorization': 'Bearer ' + String(authTokens.access)
-        //             }
-        //         })
-        //     )
-        //     .then(res => {
-        //         if (res.status !== 200) {
-        //             throw new Error(res.statusText)
-        //         }
-        //         return res.json()
-        //     })
-        //     .then(data => {
-        //         return data[0]
-        //     })
-        // })).then(values => {
-        //     setCurrentTickerInfo(values)
-        //     if (loading) {
-        //         setLoading(false)
-        //     }
-        // }).catch((e) => {
-        //     alert(e)
-        //     logoutUser()
-        // })
+    
         //eslint-disable-next-line
     }, [watchlistitems])
 
@@ -71,7 +44,7 @@ function Watchlist() {
         )
     }
     return (
-        <div className="watchlist flex-shrink-0 h-50 border border-light border-3">
+        <div className="watchlistContainer h-50 border border-light border-2">
             <div className="d-flex border-bottom border-light border-2">
                 <h5 className="py-2 mb-0 w-50 text-center border-light border-end border-2">Watchlist</h5>
                 <span className="w-50 p-2 text-center trigger" data-toggle="modal" data-target="#searchModal">
@@ -88,24 +61,20 @@ function Watchlist() {
                         <div className="col">Close</div>
                         <div className="col">Open</div>
                     </div>
-                    {currentTickerInfo.map((ticker, i) => (
-                        <div 
-                            key={i} 
-                            onClick={toggleActive} 
-                            className={`row border-bottom border-light trigger ${ticker === activeStock ? 'activeStock' : ''}`} 
-                            id={ticker}
-                        >
-                            <div className="col">
-                                {ticker}
+                    <div className="mt-2">
+                        {currentTickerInfo.map((ticker, i) => (
+                            <div 
+                                key={i} 
+                                onClick={toggleActive} 
+                                className={`row trigger ${ticker === activeStock ? 'activeStock' : ''}`} 
+                                id={ticker}
+                            >
+                                <div className="col">
+                                    {ticker}
+                                </div>
                             </div>
-                            {/* <div className="col">
-                                {ticker.close_price}
-                            </div >
-                            <div className="col">
-                                {ticker.high_price}
-                            </div> */}
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             ) : (
                 <div>
