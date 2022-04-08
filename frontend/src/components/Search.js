@@ -35,17 +35,18 @@ function Search() {
 
     let listDivs = (result, i) => {
         const symbol = result["1. symbol"]
+        const company = result["2. name"]
         return (
             <div
                 key={i} 
                 className="row trigger py-1 searchItem" 
                 value={symbol}
-                onClick={() => setStorageSymbol(symbol)}
+                onClick={() => setStorageSymbol(symbol, company)}
                 data-toggle="modal" 
                 data-target="#searchModal"
             >
                 <div className="col-3">{symbol}</div>
-                <div className="col-9">{result["2. name"]}</div>
+                <div className="col-9">{company}</div>
             </div>
         )
     }

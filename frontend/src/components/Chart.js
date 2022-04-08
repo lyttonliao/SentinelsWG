@@ -17,7 +17,7 @@ function Chart() {
     const [ externalSelections, setExternalSelections ] = useState([])
     const [ internalSelections, setInternalSelections ] = useState([])
     const [ sync, setSync ] = useState(false)
-    const { activeStock, watchlistitems, setWatchlistItems } = useContext(AppContext)
+    const { activeStock, activeCompany, watchlistitems, setWatchlistItems } = useContext(AppContext)
     const { user, authTokens } = useContext(AuthContext)
 
     const primaryRef = useRef()
@@ -143,7 +143,7 @@ function Chart() {
     useEffect(() => {
         if (chartData.length === 0 || activeStock !== display) {
             retrieveAPIData(activeStock).then(data => setChartData(data))
-            retrieveTicker(activeStock).then(ticker => {
+            retrieveTicker(activeStock, activeCompany).then(ticker => {
                 setTicker(ticker[0])
             })
             setDisplay(activeStock)

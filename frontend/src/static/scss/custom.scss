@@ -37,6 +37,16 @@ a:visited {
     width: 275px !important;
 }
 
+.remove-wl-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.remove-wl-button:hover {
+    color: $primary
+}
+
 .newsContainer {
     width: 275px !important;
     overflow: auto;

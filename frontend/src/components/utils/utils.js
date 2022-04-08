@@ -28,7 +28,7 @@ export async function retrieveAPIData(symbol) {
 }
 
 // Fetch ticker data if symbol exists within DB, otherwise create a new ticker object
-export async function retrieveTicker(symbol) {
+export async function retrieveTicker(symbol, company) {
     const getResponse = await fetch(`http://127.0.0.1:8000/api/tickers/?symbol=${symbol}`, {
         method: 'GET',
         headers: {
@@ -48,7 +48,7 @@ export async function retrieveTicker(symbol) {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         },
-        body: JSON.stringify({'symbol': symbol})
+        body: JSON.stringify({'company': company, 'symbol': symbol})
     })
 
     if (postResponse.status === 201) {

@@ -9,13 +9,16 @@ export default AppContext
 export const AppContextProvider = ({children}) => {
 
     const [ activeStock, setActiveStock ] = useState(localStorage.getItem('activeStock') ?? '')
+    const [ activeCompany, setActiveCompany ] = useState(localStorage.getItem('activeCompany') ?? '')
     const [ watchlistitems, setWatchlistItems ] = useState([])
     const { user, authTokens, logoutUser } = useContext(AuthContext)
     const prevWatchlistitemsRef = useRef()
 
-    function setStorageSymbol (symbol) {
+    function setStorageSymbol(symbol, company) {
         localStorage.setItem('activeStock', symbol)
+        localStorage.setItem('activeCompany', company)
         setActiveStock(symbol)
+        setActiveCompany(company)
     }
 
 
@@ -41,7 +44,7 @@ export const AppContextProvider = ({children}) => {
 
     useEffect(() => {
         if (!activeStock) {
-            setStorageSymbol('IBM')
+            setStorageSymbol('IBM', 'International Business Machines Corp')
         }
     }, [activeStock])
 
@@ -59,6 +62,7 @@ export const AppContextProvider = ({children}) => {
 
     let contextData = {
         activeStock: activeStock,
+        activeCompany: activeCompany,
         setStorageSymbol: setStorageSymbol,
         watchlistitems: watchlistitems,
         setWatchlistItems: setWatchlistItems

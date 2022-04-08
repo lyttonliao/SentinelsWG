@@ -11990,6 +11990,22 @@ a:visited {
   width: 275px !important;
 }
 
+.remove-wl-button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.remove-wl-button:hover {
+  color: #0d6efd;
+}
+
 .newsContainer {
   width: 275px !important;
   overflow: auto;

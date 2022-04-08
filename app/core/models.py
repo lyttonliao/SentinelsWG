@@ -32,6 +32,7 @@ class UserManager(BaseUserManager):
 class Ticker(models.Model):
     """List of tickers that will reference watchlistitems and stockinfo"""
     symbol = models.CharField(max_length=255, unique=True)
+    company = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return self.symbol

@@ -74,11 +74,15 @@ export const AuthProvider = ({children}) => {
                 'password2': e.target[4].value,
             })
         })
+        
         let data = await response.json()
-
-        if (!response.ok) {
+        const tokens = {'access': data.access_token, 'refresh': data.fresh_token}
+        if (response.ok) {
+            postLoginActions(tokens)
+        } else {
             setErrorMessages(data)
         }
+
     }
 
 

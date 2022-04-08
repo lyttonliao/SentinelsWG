@@ -8,7 +8,8 @@ class WatchlistItemSerializer(serializers.ModelSerializer):
 
     user = serializers.ReadOnlyField(source='user.email')
     symbol = serializers.ReadOnlyField(source='ticker.symbol')
+    company = serializers.ReadOnlyField(source='ticker.company')
     class Meta:
         model = WatchlistItem
-        fields = ('id', 'user', 'ticker', 'symbol')
+        fields = ('id', 'user', 'ticker', 'symbol', 'company')
         read_only_fields = ('id',)
