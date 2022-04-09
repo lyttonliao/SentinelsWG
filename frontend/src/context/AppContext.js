@@ -14,6 +14,7 @@ export const AppContextProvider = ({children}) => {
     const { user, authTokens, logoutUser } = useContext(AuthContext)
     const prevWatchlistitemsRef = useRef()
 
+
     function setStorageSymbol(symbol, company) {
         localStorage.setItem('activeStock', symbol)
         localStorage.setItem('activeCompany', company)
@@ -22,6 +23,7 @@ export const AppContextProvider = ({children}) => {
     }
 
 
+    // Retrieves watchlist items through user object
     async function getWatchlist() {
         const response = await fetch(`http://127.0.0.1:8000/api/users/${user.user_id}/`, {
             method: 'GET',
@@ -42,6 +44,7 @@ export const AppContextProvider = ({children}) => {
     }
 
 
+    // Sets default stock displayed as IBM
     useEffect(() => {
         if (!activeStock) {
             setStorageSymbol('IBM', 'International Business Machines Corp')

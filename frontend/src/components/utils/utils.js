@@ -1,7 +1,6 @@
 // Fetch 20-year daily historic prices of stock
 export async function retrieveAPIData(symbol) {
-    const response = await fetch('sample.json', {
-    // const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=full&apikey=${process.env.REACT_APP_ALPHAVANTAGE_APIKEY}`, {
+    const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=full&apikey=${process.env.REACT_APP_ALPHAVANTAGE_APIKEY}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -58,48 +57,3 @@ export async function retrieveTicker(symbol, company) {
         console.log(postResponse.statusText)
     }
 }
-
-
-// export async function retrieveDBData({ symbol }) {
-//     const response = await fetch(`http://127.0.0.1:8000/api/tickerhistoricinfo/?ticker=${symbol}/`, {
-//         method: 'GET',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/json'
-//         }
-//     })
-
-//     let data = await response.json()
-
-//     if (response.status === 200) {
-//         return data
-//     } else {
-//         throw new Error(response.statusText)
-//     }
-// }
-
-
-// export async function updateDBData(data) {
-//     let ticker = await fetch('http://127.0.0.1:8000/api/ticker/', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/json',
-//             'Authorization': 'Bearer ' + String(authTokens.access)
-//         },
-//         body: JSON.stringify({
-//             'symbol': symbol,
-//         })
-//     })
-
-//     for (const entry of data) {
-//         await fetch('http://127.0.0.1:8000/api/tickerhistoricinfo/' , {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'Accept': 'application/json',
-//                 'Authorization': 'Bearer + String('
-//             }
-//         })
-//     }
-// }

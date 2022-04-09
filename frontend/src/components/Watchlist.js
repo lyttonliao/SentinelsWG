@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import AppContext from "../context/AppContext";
 
@@ -8,17 +8,18 @@ function Watchlist() {
     const { activeStock, setStorageSymbol, watchlistitems, setWatchlistItems } = useContext(AppContext)
 
 
-    function toggleActive(e) {
-        const target = e.currentTarget
-        if (activeStock === target.id) return;
+    // Sets CSS className for the active stock and sets local state and local Storage
+    function toggleActive(e, symbol, company) {
+        debugger
+        if (activeStock === symbol) return;
 
         let currStock = document.getElementById(activeStock)
-        if (currStock) {
-            currStock.classList.remove('activeStock')
-        }
+        debugger
+        currStock.classList.remove('activeStock')
 
-        target.classList.add('activeStock')
-        setStorageSymbol(target.id)
+        e.target.classList.add('activeStock')
+        debugger
+        setStorageSymbol(symbol, company)
     }
 
 
@@ -30,8 +31,8 @@ function Watchlist() {
     }
 
 
+    // Remove individual watchlist items from user's list
     async function removeWatchlistItem(e, idx, id) {
-        debugger
         e.stopPropagation()
         let response = await fetch(`http://127.0.0.1:8000/api/watchlistitems/${id}/`, {
             method: 'DELETE',
@@ -65,7 +66,7 @@ function Watchlist() {
                             {watchlistitems.map((item, i) => (
                                 <div 
                                     key={i} 
-                                    onClick={toggleActive} 
+                                    onClick={(e) => toggleActive(e, item.symbol, item.company)} 
                                     className={`watchlistitem row trigger ${item.symbol === activeStock ? 'activeStock' : ''}`} 
                                     id={item.symbol}
                                 >

@@ -7,6 +7,7 @@ function News() {
     let [ articles, setArticles ] = useState([])
 
 
+    // Sends a 'GET' reequest to News API for the active stock
     async function retrieveNewsArticles() {
         // const date = new Date().toISOString().split('T')[0]
         const url = 'https://newsapi.org/v2/everything?' +

@@ -60,6 +60,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
             })
         })
 
+        // Converts data to volume only
         const volumeData = data.map(d => {
             return ({
                 "time": d.date,
@@ -67,6 +68,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
             })
         })
 
+        // Plots data as candlestick series
         const candleSeries = chart.current.addCandlestickSeries({
             upColor: '#4bffb5',
             downColor: '#ff4976',
@@ -130,6 +132,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
     }, [])
 
 
+    // Calculates unweighted SMA with default n=20
     function simpleMovingAverage(n=20) {
         const lineSeries = chart.current.addLineSeries({
             lineWidth: 1,
@@ -151,6 +154,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
     }
 
 
+    // Calculates EMA with default n=20, smoothing=2
     function exponentialMovingAverage(n=20, smoothing=2) {
         const lineSeries = chart.current.addLineSeries({
             lineWidth: 1,
@@ -174,6 +178,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
     }
 
 
+    // Calculates bollinger bands series with n=20
     function bollingerBands(n=20) {
         let startData = data.slice(0, n - 1)
         let recentSum = startData.reduce((a, b) => a + b.close, 0)
@@ -219,6 +224,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
     }
 
 
+    // Mounts technical indicators onto chart
     useEffect(() => {
         for (let i = 0; i < techIndicators.length; i++) {
             const curr = techIndicators[i]
@@ -238,6 +244,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
     }, [techIndicators])
 
 
+    // Last chart displayed will have time scale shown
     useEffect(() => {
         if (!last) {
             chart.current.timeScale().applyOptions({
@@ -267,6 +274,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
     }
 
 
+    // Provide information on active indicators and a button for deletion
     function indicatorsLegend() {
         return techIndicators.map((indicator, i) => {
             return(

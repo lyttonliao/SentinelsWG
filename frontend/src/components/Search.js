@@ -1,17 +1,23 @@
 import React, { useState, useContext } from 'react';
 import AppContext from '../context/AppContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faDove } from '@fortawesome/free-solid-svg-icons'
 
 
 function Search() {
     const [ matches, setMatches ] = useState([])
     const [ errorMessage, setErrorMessage ] = useState('')
     const [ keywords, changeKeywords ] = useState('')
+    const [ loading, setLoading ] = useState(false)
     const { setStorageSymbol } = useContext(AppContext)
 
 
+    // Sends a 'GET' request to stock API to retrieve list of matches to the keyword
     async function searchKeyword(e) {
         e.preventDefault()
+        setLoading(true)
         let sym = e.target[0].value
+        debugger
         let response = await fetch(`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${sym}&apikey=${process.env.REACT_APP_ALPHAVANTAGE_APIKEY}`, {
             method: "GET",
             headers: {
@@ -19,8 +25,9 @@ function Search() {
                 'Accept': 'application/json'
             }
         })
-
         let data = await response.json()
+        debugger
+        setLoading(false)
 
         if (response.status === 200) {
             setMatches(data.bestMatches)
@@ -67,6 +74,16 @@ function Search() {
                             />
                         </form>
                     </div>
+                    {loading &&
+                        <div className="modal-body search-modal-body">
+                            <h3 className="text-center font-weight-bold">
+                                A messenger will soon arrive with the requested information.
+                            </h3>
+                            <div className="d-flex justify-content-center align-items-center">
+                                <FontAwesomeIcon icon={faDove} size="3x" />
+                            </div>
+                        </div>
+                    }
                     {matches.length > 0 &&
                         <div className="modal-body search-modal-body">
                             <div className="row mb-3 px-3">
