@@ -53,13 +53,23 @@ a:visited {
 }
 
 .remove-wl-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: none;
 }
 
 .remove-wl-button:hover {
     color: $primary
+}
+
+.watchlistItem:hover .remove-wl-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
+
+.activeStock .remove-wl-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;  
 }
 
 // ------------- News.js -------------

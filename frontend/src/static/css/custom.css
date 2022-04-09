@@ -11961,6 +11961,12 @@ a:visited {
   color: inherit;
 }
 
+.trigger:hover {
+  background-color: rgba(233, 236, 239, 0.25);
+  pointer-events: auto;
+  cursor: default;
+}
+
 .navbar {
   height: 100px !important;
   padding-top: 0;
@@ -11981,11 +11987,6 @@ a:visited {
   padding: .25rem 0;
 }
 
-.infoBlock {
-  width: 275px !important;
-  height: calc(100% - 100px);
-}
-
 .watchlistContainer {
   width: 275px !important;
 }
@@ -11995,7 +11996,20 @@ a:visited {
   padding-bottom: .1rem !important;
 }
 
+.activeStock {
+  border: #0d6efd 1px solid !important;
+  background-color: rgba(233, 236, 239, 0.25);
+}
+
 .remove-wl-button {
+  display: none;
+}
+
+.remove-wl-button:hover {
+  color: #0d6efd;
+}
+
+.watchlistItem:hover .remove-wl-button {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -12007,8 +12021,16 @@ a:visited {
           align-items: center;
 }
 
-.remove-wl-button:hover {
-  color: #0d6efd;
+.activeStock .remove-wl-button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .newsContainer {
@@ -12033,23 +12055,9 @@ a:visited {
   padding-bottom: 3rem;
 }
 
-.trigger:hover {
-  background-color: rgba(233, 236, 239, 0.25);
-  pointer-events: auto;
-  cursor: default;
-}
-
-.activeStock {
-  border: #0d6efd 1px solid !important;
-  background-color: rgba(233, 236, 239, 0.25);
-}
-
-.chartContainer {
-  height: calc(100% - 48px);
-}
-
-.chart-legend {
-  z-index: 10;
+.infoBlock {
+  width: 275px !important;
+  height: calc(100% - 100px);
 }
 
 .searchInput {
@@ -12084,6 +12092,14 @@ a:visited {
 
 .searchItem:hover {
   background-color: rgba(108, 117, 125, 0.25);
+}
+
+.chartContainer {
+  height: calc(100% - 48px);
+}
+
+.chart-legend {
+  z-index: 10;
 }
 
 .widgets {
