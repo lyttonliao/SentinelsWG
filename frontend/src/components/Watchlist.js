@@ -10,15 +10,13 @@ function Watchlist() {
 
     // Sets CSS className for the active stock and sets local state and local Storage
     function toggleActive(e, symbol, company) {
-        debugger
+        e.stopPropagation()
         if (activeStock === symbol) return;
 
         let currStock = document.getElementById(activeStock)
-        debugger
         currStock.classList.remove('activeStock')
 
-        e.target.classList.add('activeStock')
-        debugger
+        e.currentTarget.classList.add('activeStock')
         setStorageSymbol(symbol, company)
     }
 
@@ -67,7 +65,7 @@ function Watchlist() {
                                 <div 
                                     key={i} 
                                     onClick={(e) => toggleActive(e, item.symbol, item.company)} 
-                                    className={`watchlistitem row trigger ${item.symbol === activeStock ? 'activeStock' : ''}`} 
+                                    className={`watchlistItem row trigger ${item.symbol === activeStock ? 'activeStock' : ''}`} 
                                     id={item.symbol}
                                 >
                                     <div className="col-3">{item.symbol}</div>
