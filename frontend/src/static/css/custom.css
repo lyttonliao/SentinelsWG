@@ -11990,6 +11990,11 @@ a:visited {
   width: 275px !important;
 }
 
+.watchlistItem {
+  padding-top: .1rem !important;
+  padding-bottom: .1rem !important;
+}
+
 .remove-wl-button {
   display: -webkit-box;
   display: -ms-flexbox;

@@ -142,6 +142,7 @@ function Chart() {
     // Fetches stock data from public API, retrieves the ticker info from DB
     useEffect(() => {
         if (chartData.length === 0 || activeStock !== display) {
+            debugger
             retrieveAPIData(activeStock).then(data => setChartData(data))
             retrieveTicker(activeStock, activeCompany).then(ticker => {
                 setTicker(ticker[0])
