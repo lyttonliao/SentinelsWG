@@ -81,7 +81,7 @@ function Watchlist() {
                         </div>
                     ) : (
                         <div>
-                            {!user && <h3 className="px-4 mt-5 lh-base text-center">Sign in or Sign up <br></br> to get started!</h3>}
+                            {!user && <h3 className="px-3 mt-4 lh-base text-center">Sign in or Sign up <br></br> to get started!</h3>}
                         </div>
                     )}
                 </div>

@@ -17,7 +17,6 @@ function Search() {
         e.preventDefault()
         setLoading(true)
         let sym = e.target[0].value
-        debugger
         let response = await fetch(`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${sym}&apikey=${process.env.REACT_APP_ALPHAVANTAGE_APIKEY}`, {
             method: "GET",
             headers: {
@@ -26,7 +25,6 @@ function Search() {
             }
         })
         let data = await response.json()
-        debugger
         setLoading(false)
 
         if (response.status === 200) {
