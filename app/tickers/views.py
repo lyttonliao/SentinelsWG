@@ -14,7 +14,7 @@ class TickerViewSet(mixins.CreateModelMixin,
     def get_queryset(self):
         symbol = self.request.query_params.get('symbol', None)
         queryset = Ticker.objects.all()
-        
+
         if symbol:
             queryset = queryset.filter(symbol=symbol)
         return queryset

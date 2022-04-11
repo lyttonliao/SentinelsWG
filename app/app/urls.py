@@ -23,12 +23,12 @@ urlpatterns = [
     path(r'api/', include(router.urls)),
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
     path(
-        'dj-rest-auth/registration/', 
+        'dj-rest-auth/registration/',
         include('dj_rest_auth.registration.urls')
     ),
     path(
-        'token/', 
-        MyTokenObtainPairView.as_view(), 
+        'token/',
+        MyTokenObtainPairView.as_view(),
         name='obtain_token_pair'
     ),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

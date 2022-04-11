@@ -1,7 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
+from django.utils.translation import gettext as _
+from django.contrib.auth.models import AbstractBaseUser, \
+                                        BaseUserManager, \
                                         PermissionsMixin
-from django.conf import settings
 
 
 class UserManager(BaseUserManager):
@@ -42,19 +43,19 @@ class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model that supports using email instead of username"""
 
     email = models.EmailField(
-        max_length=255, 
+        max_length=255,
         unique=True
     )
     first_name = models.CharField(
-        max_length=255, 
-        null=True, 
-        blank=True, 
+        max_length=255,
+        null=True,
+        blank=True,
         default=None
     )
     last_name = models.CharField(
-        max_length=255, 
-        null=True, 
-        blank=True, 
+        max_length=255,
+        null=True,
+        blank=True,
         default=None
     )
     is_active = models.BooleanField(default=True)

@@ -12,7 +12,7 @@ class TickerHistoricInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = TickerHistoricInfo
         fields = (
-            'id', 'ticker', 'date', 'open_price', 
+            'id', 'ticker', 'date', 'open_price',
             'close_price', 'high_price', 'low_price', 'volume'
         )
         depth = 1
@@ -26,7 +26,7 @@ class TickerSerializer(serializers.ModelSerializer):
         read_only=True,
     )
     ticker_historic_info = serializers.PrimaryKeyRelatedField(
-        many=True, 
+        many=True,
         read_only=True
     )
 
