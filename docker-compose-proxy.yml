@@ -8,11 +8,11 @@ services:
       - ./app:/app
       - static_data:/vol/web
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=crazylion101
+      - ALLOWED_HOSTS=127.0.0.1
     depends_on:
       - db
 
@@ -28,9 +28,9 @@ services:
   db:
     image: postgres:13-alpine
     environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=crazylion101
 
 volumes:
   static_data:
