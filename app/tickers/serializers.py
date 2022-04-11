@@ -8,14 +8,19 @@ class TickerHistoricInfoSerializer(serializers.ModelSerializer):
     """Serializer for ticker historic info"""
 
     ticker = serializers.ReadOnlyField(source='ticker.symbol')
+
     class Meta:
         model = TickerHistoricInfo
-        fields = ('id', 'ticker', 'date', 'open_price', 'close_price', 'high_price', 'low_price', 'volume')
+        fields = (
+            'id', 'ticker', 'date', 'open_price', 
+            'close_price', 'high_price', 'low_price', 'volume'
+        )
         depth = 1
 
 
 class TickerSerializer(serializers.ModelSerializer):
     """Serializer for tickers"""
+
     watchlistitems = WatchlistItemSerializer(
         many=True,
         read_only=True,
@@ -27,4 +32,7 @@ class TickerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticker
-        fields = ('id', 'symbol', 'company', 'watchlistitems', 'ticker_historic_info')
+        fields = (
+            'id', 'symbol', 'company',
+            'watchlistitems', 'ticker_historic_info'
+        )

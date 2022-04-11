@@ -21,7 +21,6 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
 
-
         if extra_fields.get('is_staff') is not True:
             raise ValueError(_('Superuser must have is_staff=True.'))
         if extra_fields.get('is_superuser') is not True:
@@ -31,6 +30,7 @@ class UserManager(BaseUserManager):
 
 class Ticker(models.Model):
     """List of tickers that will reference watchlistitems and stockinfo"""
+
     symbol = models.CharField(max_length=255, unique=True)
     company = models.CharField(max_length=255, blank=True)
 
@@ -40,9 +40,23 @@ class Ticker(models.Model):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model that supports using email instead of username"""
-    email = models.EmailField(max_length=255, unique=True)
-    first_name = models.CharField(max_length=255, null=True, blank=True, default=None)
-    last_name = models.CharField(max_length=255, null=True, blank=True, default=None)
+
+    email = models.EmailField(
+        max_length=255, 
+        unique=True
+    )
+    first_name = models.CharField(
+        max_length=255, 
+        null=True, 
+        blank=True, 
+        default=None
+    )
+    last_name = models.CharField(
+        max_length=255, 
+        null=True, 
+        blank=True, 
+        default=None
+    )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -55,8 +69,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+
 class WatchlistItem(models.Model):
     """List of information to show when adding item to Watchlist"""
+
     user = models.ForeignKey(
         User,
         related_name='watchlistitems',
@@ -75,6 +91,7 @@ class WatchlistItem(models.Model):
 
 class TickerHistoricInfo(models.Model):
     """Stores years of stock info for strategic testing"""
+    
     ticker = models.ForeignKey(
         Ticker,
         related_name='ticker_historic_info',

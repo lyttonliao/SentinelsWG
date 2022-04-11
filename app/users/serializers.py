@@ -1,12 +1,9 @@
 from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import update_last_login
 
 from rest_framework import serializers
 from watchlistitems.serializers import WatchlistItemSerializer
 from tickers.serializers import TickerSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.settings import api_settings
 from dj_rest_auth.registration.serializers import RegisterSerializer
 
 
@@ -29,6 +26,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the users object"""
+
     watchlistitems = WatchlistItemSerializer(
         many=True,
         read_only=True
@@ -43,13 +41,15 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('email', 'password', 'first_name', 'last_name', 'watchlistitems', 'tickers')
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         depth = 2
-    
+
     def create(self, validated_data):
         """Create a new user with encrypted password and return it"""
+
         return get_user_model().objects.create_user(**validated_data)
 
     def update(self, instance, validated_data):
         """Update a user, setting the password correclty and return it"""
+
         password = validated_data.pop('password', None)
         user = super().update(instance, validated_data)
 

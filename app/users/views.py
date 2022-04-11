@@ -2,9 +2,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import User
-from users.serializers import UserSerializer, MyTokenObtainPairSerializer, CustomRegisterSerializer
+from users.serializers import UserSerializer, MyTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from dj_rest_auth.registration.views import RegisterView
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
