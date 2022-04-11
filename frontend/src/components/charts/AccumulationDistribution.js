@@ -68,13 +68,14 @@ const AccumulationDistribution = ({ chart, data, removeSelector, last, extLen })
             lastValueVisible: false,
         })
         ADISeries.setData(ADIData)
+        //eslint-disable-next-line
     }, [])
 
 
     // Resize chart on container resizes
     useEffect(() => {
         resizeObserver.current = new ResizeObserver(entries => {
-            if (entries.length === 0 || entries[0].target != chartContainerRef.current) { return; }
+            if (entries.length === 0 || entries[0].target !== chartContainerRef.current) { return; }
 
             const { width, height } = entries[0].contentRect
             chart.current.applyOptions({ width: width, height: height})
@@ -83,6 +84,7 @@ const AccumulationDistribution = ({ chart, data, removeSelector, last, extLen })
         resizeObserver.current.observe(chartContainerRef.current)
 
         return () => resizeObserver.current.disconnect()
+        //eslint-disable-next-line
     }, [])
 
 
@@ -100,6 +102,7 @@ const AccumulationDistribution = ({ chart, data, removeSelector, last, extLen })
                 setLegend({"time": date, "value": roundedVal})
             }
         })
+        //eslint-disable-next-line
     }, [])
 
 
@@ -113,6 +116,7 @@ const AccumulationDistribution = ({ chart, data, removeSelector, last, extLen })
                 visible: true
             })
         }
+        //eslint-disable-next-line
     }, [last])
 
 
