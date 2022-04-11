@@ -10,7 +10,7 @@
             {"name": "DB_NAME", "value": "${db_name}"},
             {"name": "DB_USER", "value": "${db_user}"},
             {"name": "DB_PASS", "value": "${db_pass}"},
-            {"name": "ALLOWED_HOSTS", "value": "127.0.0.1"}
+            {"name": "ALLOWED_HOSTS", "value": "${allowed_hosts}"}
         ],
         "logConfiguration": {
             "logDriver": "awslogs",
