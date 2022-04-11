@@ -5,12 +5,12 @@
         "essential": true,
         "memoryReservation": 256,
         "environment": [
-            {"name": "DJANGO_SECRET_KEY", "value": "${DJANGO_SECRET_KEY}"},
-            {"name": "DB_HOST", "value": "${DB_HOST}"},
-            {"name": "DB_NAME", "value": "${DB_NAME}"},
-            {"name": "DB_USER", "value": "${DB_USER}"},
-            {"name": "DB_PASS", "value": "${DB_PASS}"},
-            {"name": "ALLOWED_HOSTS", "value": "${ALLOWED_HOSTS"}
+            {"name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}"},
+            {"name": "DB_HOST", "value": "${db_host}"},
+            {"name": "DB_NAME", "value": "${db_name}"},
+            {"name": "DB_USER", "value": "${db_user}"},
+            {"name": "DB_PASS", "value": "${db_pass}"},
+            {"name": "ALLOWED_HOSTS", "value": "127.0.0.1"}
         ],
         "logConfiguration": {
             "logDriver": "awslogs",
