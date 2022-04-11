@@ -38,8 +38,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('email', 'password', 'first_name',
-                'last_name', 'watchlistitems', 'tickers')
+        fields = (
+            'email', 'password', 'first_name',
+            'last_name', 'watchlistitems', 'tickers'
+        )
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         depth = 2
 
