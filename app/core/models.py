@@ -92,7 +92,7 @@ class WatchlistItem(models.Model):
 
 class TickerHistoricInfo(models.Model):
     """Stores years of stock info for strategic testing"""
-    
+
     ticker = models.ForeignKey(
         Ticker,
         related_name='ticker_historic_info',
