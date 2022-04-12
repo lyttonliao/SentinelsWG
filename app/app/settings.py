@@ -10,11 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+from pathlib import Path
 from socket import gethostname, gethostbyname
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# ROOT_DIR = os.path.dirname(__file__)
+ROOT_DIR = Path(__file__).parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -150,10 +153,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = '/vol/web/media'
 STATIC_ROOT = '/vol/web/static'
 
-
-STATICFILE_DIRS = [
-    os.path.join(BASE_DIR, 'src/static')
-]
+# STATICFILES_DIRS = [
+#     os.path.join(ROOT_DIR, 'frontend/src/static')
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -163,7 +165,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ALLOWED_ORIGINS = [
-     'http://localhost:3000'
+    'http://localhost:3000'
 ]
 
 AUTH_USER_MODEL = 'core.User'
