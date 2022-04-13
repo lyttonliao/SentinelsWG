@@ -3,7 +3,8 @@ version: '3.7'
 services:
   app:
     build:
-      context: .
+      context: ./app/
+      dockerfile: Dockerfile
     command: >
       sh -c "python manage.py wait_for_db &&
               python manage.py migrate &&
@@ -20,6 +21,20 @@ services:
       - DB_PASS=crazylion101
     depends_on:
       - db
+
+  web:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    stdin_open: true
+    depends_on:
+      - app
+    volumes:
+      - ./frontend:/usr/src/app
+    command: npm start
+    restart: always
   
   db:
     image: postgres:13-alpine
