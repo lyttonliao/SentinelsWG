@@ -42,8 +42,11 @@ Build and Push:
   script:
     - apk add python3
     - pip3 install awscli
-    - docker build --compress -f app/Dockerfile -t $ECR_REPO:$CI_COMMIT_SHORT_SHA .
-    - docker build --compress -f frontend/Dockerfile -t $ECR_REPO:$CI_COMMIT_SHORT_SHA .
+    - cd app/
+    - docker build --compress -t $ECR_REPO:$CI_COMMIT_SHORT_SHA .
+    - cd ../frontend
+    - docker build --compress -t $ECR_REPO:$CI_COMMIT_SHORT_SHA .
+    - cd ../
     - $(aws ecr get-login --no-include-email --region us-east-1)
     - docker push $ECR_REPO:$CI_COMMIT_SHORT_SHA
     - docker tag $ECR_REPO:$CI_COMMIT_SHORT_SHA $ECR_REPO:latest
