@@ -3,8 +3,7 @@ version: '3.7'
 services:
   app:
     build:
-      context: ./app/
-      dockerfile: Dockerfile
+      context: ./app
     command: >
       sh -c "python manage.py wait_for_db &&
               python manage.py migrate &&
@@ -24,15 +23,14 @@ services:
 
   web:
     build:
-      context: ./frontend/
-      dockerfile: Dockerfile
+      context: ./frontend
     ports:
       - 3000:3000
     stdin_open: true
     depends_on:
       - app
     volumes:
-      - ./frontend:/usr/src/app
+      - ./frontend:/app
     command: npm start
     restart: always
   

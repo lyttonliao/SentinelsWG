@@ -3,7 +3,7 @@ version: '3.7'
 services:
   app:
     build:
-      context: ./app/
+      context: ./app
     volumes:
       - ./app:/app
       - static_data:/vol/web

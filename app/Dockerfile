@@ -1,4 +1,4 @@
-FROM python:3.9-alpine
+FROM python:3.9-alpine AS backend
 LABEL maintainer="Lytton Liao - Sentinels"
 
 ENV PYTHONUNBUFFERED 1
@@ -7,7 +7,7 @@ ENV PATH="/scripts:/${PATH}"
 
 RUN pip install --upgrade pip
 
-COPY ./requirements.txt /requirements.txt
+COPY ./app/requirements.txt /requirements.txt
 RUN apk add --update --no-cache postgresql-client jpeg-dev && \
     apk add --update --no-cache --virtual .tmp-build-deps \
         gcc libc-dev linux-headers postgresql-dev musl-dev zlib zlib-dev libffi-dev && \
@@ -17,7 +17,7 @@ RUN apk add --update --no-cache postgresql-client jpeg-dev && \
 RUN mkdir /app
 WORKDIR /app
 COPY ./app /app
-COPY ./scripts /scripts
+COPY ./app/scripts /scripts
 RUN chmod +x /scripts/*
 
 RUN mkdir -p /vol/web/media && \
