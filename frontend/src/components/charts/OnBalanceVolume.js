@@ -75,6 +75,7 @@ const OnBalanceVolume = ({ chart, data, removeSelector, last, extLen }) => {
             lastValueVisible: false,
         })
         OBVSeries.setData(OBVData)
+        //eslint-disable-next-line
     }, [])
 
 
@@ -90,6 +91,7 @@ const OnBalanceVolume = ({ chart, data, removeSelector, last, extLen }) => {
         resizeObserver.current.observe(chartContainerRef.current)
 
         return () => resizeObserver.current.disconnect()
+        //eslint-disable-next-line
     }, [])
 
     
@@ -107,6 +109,7 @@ const OnBalanceVolume = ({ chart, data, removeSelector, last, extLen }) => {
                 setLegend({"time": date, "value": roundedVal})
             }
         })
+        //eslint-disable-next-line
     }, [])
 
 
@@ -120,6 +123,7 @@ const OnBalanceVolume = ({ chart, data, removeSelector, last, extLen }) => {
                 visible: true
             })
         }
+        //eslint-disable-next-line
     }, [last])
 
 

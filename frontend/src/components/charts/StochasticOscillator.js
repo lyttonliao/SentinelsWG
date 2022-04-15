@@ -139,13 +139,14 @@ const StochasticOscillator = ({ chart, data, removeSelector, last, extLen }) => 
             color: "orange"
         })
         SMASeries.setData(SMAData)
+        //eslint-disable-next-line
     }, [])
 
 
     // Resize chart on container resizes.
     useEffect(() => {
         resizeObserver.current = new ResizeObserver(entries => {
-            if (entries.length === 0 || entries[0].target != chartContainerRef.current) { return; }
+            if (entries.length === 0 || entries[0].target !== chartContainerRef.current) { return; }
 
             const { width, height } = entries[0].contentRect
             chart.current.applyOptions({ width: width, height: height})
@@ -154,6 +155,7 @@ const StochasticOscillator = ({ chart, data, removeSelector, last, extLen }) => 
         resizeObserver.current.observe(chartContainerRef.current)
 
         return () => resizeObserver.current.disconnect()
+        //eslint-disable-next-line
     }, [])
 
 
@@ -173,6 +175,7 @@ const StochasticOscillator = ({ chart, data, removeSelector, last, extLen }) => 
                 })
             }
         })
+        //eslint-disable-next-line
     }, [])
 
 
@@ -186,6 +189,7 @@ const StochasticOscillator = ({ chart, data, removeSelector, last, extLen }) => 
                 visible: true
             })
         }
+        //eslint-disable-next-line
     }, [last])
 
 

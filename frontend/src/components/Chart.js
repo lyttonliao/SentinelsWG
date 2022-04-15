@@ -153,7 +153,7 @@ function Chart() {
             setChartData([])
             setDisplay('')
         }
-
+        //eslint-disable-next-line
     }, [activeStock])
 
 
@@ -195,12 +195,13 @@ function Chart() {
                 refs[selection].current.timeScale().subscribeVisibleTimeRangeChange(myVisibleTimeRangeChangeHandler)
             })
         }
+        //eslint-disable-next-line
     }, [sync])
 
 
     function auxiliaryCharts() {
         const len = externalSelections.length
-        const result = externalSelections.map((selection, i) => {
+        const result = externalSelections.forEach((selection, i) => {
             if (selection === 'Relative Strength Index') {
                 return <RSI key={i} chart={rsiRef} data={chartData} removeSelector={removeSelector} last={i === externalSelections.length - 1} extLen={len} />
             }

@@ -140,6 +140,7 @@ const RSI = ({ chart, data, removeSelector, last, extLen }) => {
             //     setLegend({"value": iterator.next().value.toFixed(2)})
             // }
         // })
+        //eslint-disable-next-line
     }, [])
 
 
@@ -155,6 +156,7 @@ const RSI = ({ chart, data, removeSelector, last, extLen }) => {
         resizeObserver.current.observe(chartContainerRef.current)
 
         return () => resizeObserver.current.disconnect()
+        //eslint-disable-next-line
     }, [])
 
 
@@ -174,6 +176,7 @@ const RSI = ({ chart, data, removeSelector, last, extLen }) => {
                 })
             }
         })
+        //eslint-disable-next-line
     }, [])
 
 
@@ -187,6 +190,7 @@ const RSI = ({ chart, data, removeSelector, last, extLen }) => {
                 visible: true
             })
         }
+        //eslint-disable-next-line
     }, [last])
 
 

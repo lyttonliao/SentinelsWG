@@ -94,6 +94,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
         })
 
         volumeSeries.setData(volumeData);
+        //eslint-disable-next-line
     }, [])
 
 
@@ -109,6 +110,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
         resizeObserver.current.observe(chartContainerRef.current)
 
         return () => resizeObserver.current.disconnect()
+        //eslint-disable-next-line
     }, [])
 
 
@@ -129,6 +131,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
                 })
             }
         })
+        //eslint-disable-next-line
     }, [])
 
 
@@ -255,6 +258,7 @@ const CandleStickChart = ({ chart, symbol, data, techIndicators, removeSelector,
                 visible: true
             })
         }
+        //eslint-disable-next-line
     }, [last])
 
 
